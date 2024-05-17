@@ -1,7 +1,13 @@
-import { View, Text, ImageBackground, Image } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 const Login = () => {
   return (
@@ -32,20 +38,26 @@ const Login = () => {
 
             <View className="w-[84vw] pt-[15vh] ">
               <View className="justify-around flex-row rounded-full border-2">
-                <View className="bg-primary rounded-full w-[50%] ">
-                  <Link href="signin" className="py-4 px-10">
-                    <Text className=" text-center font-psemibold text-white">
-                      Sign in
-                    </Text>
-                  </Link>
-                </View>
-                <View className="w-[50%]">
-                  <Link href="signup" className="py-4 px-10">
-                    <Text className="text-center text-primary font-semibold">
-                      Sign up
-                    </Text>
-                  </Link>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push("/signin");
+                  }}
+                  className="bg-primary rounded-full w-[50%] justify-center py-4 px-10"
+                >
+                  <Text className=" text-center font-psemibold text-white">
+                    Sign in
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push("/signup");
+                  }}
+                  className="w-[50%] justify-center py-4 px-10 "
+                >
+                  <Text className="text-center text-primary font-semibold">
+                    Sign up
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

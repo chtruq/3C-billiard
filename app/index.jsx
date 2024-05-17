@@ -14,7 +14,7 @@ export default function App() {
 
   useFocusEffect(() => {
     setTimeout(() => {
-      router.push("/login");
+      router.replace("/login");
     }, 1000);
   });
 

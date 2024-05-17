@@ -29,6 +29,13 @@ const AuthLayout = () => {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="verify-email"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };
