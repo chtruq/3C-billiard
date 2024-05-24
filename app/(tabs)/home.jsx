@@ -12,9 +12,9 @@ import {
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import UserPost from "../../components/UserPost";
-import UserAvatar from "../../components/UserAvatar";
-import UserComment from "../../components/UserComment";
+import UserPost from "../../components/home/UserPost";
+import UserAvatar from "../../components/home/UserAvatar";
+import UserComment from "../../components/home/UserComment";
 
 const Home = () => {
   const logo = require("../../assets/3C-Icon.png");

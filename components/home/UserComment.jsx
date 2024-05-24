@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../home/UserAvatar";
 
 const UserComment = ({ avatar, name, comment, createdAt }) => {
   return (

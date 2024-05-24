@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../home/UserAvatar";
 
 const UserPost = ({ name, time, content, like, comment, avatar }) => {
   return (
