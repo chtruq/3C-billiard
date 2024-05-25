@@ -26,17 +26,17 @@ const VerifyEmail = () => {
           <ScrollView className="mt-10 ">
             <View className="">
               <Text className="font-psemibold text-3xl text-primary">
-                Almost there
+                Gần xong rồi
               </Text>
             </View>
             <View className="mt-10">
               <Text className="text-base">
-                Please enter the 6-digit code sent to your email
+                Nhập 6 số được gửi về mail
                 <Text className="text-base font-psemibold">
                   {" "}
                   username@example.com{" "}
                 </Text>
-                for verification.
+                để xác nhận.
               </Text>
             </View>
 
@@ -68,14 +68,12 @@ const VerifyEmail = () => {
             </View>
             <View className="justify-center items-center">
               <TouchableOpacity className="mt-10 bg-primary justify-center items-center w-[90vw] py-4 rounded-xl ">
-                <Text className="font-pbold text-xl text-white">VERIFY</Text>
+                <Text className="font-pbold text-xl text-white">XÁC NHẬN</Text>
               </TouchableOpacity>
             </View>
             <View className="justify-center items-center mt-10">
-              <Text className="font-pbold">
-                Didn't receive any code? Resend it again.
-              </Text>
-              <Text className="text-gray-600">Request new code in 00:30s</Text>
+              <Text className="font-pbold">Chưa nhận được code? Gửi lại.</Text>
+              <Text className="text-gray-600">Gửi lại sau 00:30</Text>
             </View>
           </ScrollView>
           <TouchableOpacity

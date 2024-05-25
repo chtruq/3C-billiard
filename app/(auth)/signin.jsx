@@ -37,7 +37,7 @@ const SignIn = () => {
             </View>
             <View>
               <Text className="text-primary font-pbold text-3xl text-center mt-5">
-                Let's sign you in.
+                Đăng nhập
               </Text>
             </View>
 
@@ -65,7 +65,7 @@ const SignIn = () => {
                 icon={mailIcon}
               />
               <TextField
-                fieldName="Password"
+                fieldName="Mật khẩu"
                 placeholder="************"
                 onChange={onChangeText}
                 value={text}
@@ -89,7 +89,7 @@ const SignIn = () => {
             </View>
             <View className="flex-row justify-end w-[100%] mt-2">
               <Link className="text-lg" href="/forgot-password">
-                Forgot password?
+                Quên mật khẩu?
               </Link>
             </View>
 
@@ -101,7 +101,7 @@ const SignIn = () => {
                 className="py-4 bg-primary rounded-3xl border-2"
               >
                 <Text className="text-white text-base font-psemibold text-center">
-                  Sign in
+                  Đăng nhập
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -116,18 +116,18 @@ const SignIn = () => {
                     className="text-center w-6 h-6"
                   />
                   <Text className="ml-2 text-primary text-base font-psemibold text-center">
-                    Sign in with Google
+                    Đăng nhập với Google
                   </Text>
                 </View>
               </TouchableOpacity>
             </View>
 
             <View className="flex-row justify-center mt-10">
-              <Text className="text-lg">New Member?</Text>
+              <Text className="text-lg">Chưa có tài khoản?</Text>
               <Link href="/signup">
                 <Text className="text-lg text-primary font-pbold">
                   {" "}
-                  Sign up now
+                  Đăng kí ngay
                 </Text>
               </Link>
             </View>

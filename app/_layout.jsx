@@ -58,6 +58,19 @@ const RootLayout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="bida-club"
+        options={{
+          headerTitle: "Thông tin",
+          headerBackTitle: "Quay lại",
+        }}
+      />
+      <Stack.Screen
+        name="booking-clb"
+        options={{
+          headerTitle: "Đặt bàn",
+        }}
+      />
     </Stack>
   );
 };

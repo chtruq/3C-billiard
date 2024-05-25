@@ -14,7 +14,7 @@ export default function App() {
 
   useFocusEffect(() => {
     setTimeout(() => {
-      router.replace("/home");
+      router.replace("/signin");
     }, 1000);
   });
 

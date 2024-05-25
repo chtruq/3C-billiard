@@ -14,9 +14,9 @@ const UserPost = ({ name, time, content, like, comment, avatar }) => {
         </View>
       </View>
       <View>
-        <Text className="mx-2 my-2 font-pmedium">{content}</Text>
+        <Text className="mx-2 mb-2 text-base font-pmedium">{content}</Text>
       </View>
-      <View className="flex-row justify-around">
+      <View className="flex-row justify-between ml-4 mr-4">
         <View>
           <Text>{like} lượt thích</Text>
         </View>
@@ -24,12 +24,12 @@ const UserPost = ({ name, time, content, like, comment, avatar }) => {
           <Text>{comment} bình luận</Text>
         </View>
       </View>
-      <View className="flex-row justify-around mt-1 ">
+      <View className="flex-row justify-between mt-1 ml-4 ">
         <TouchableOpacity className="flex-row items-center">
           <FontAwesome name="heart-o" size={20} color="black" />
           <Text className="ml-2 font-psemibold">Thích</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="flex-row items-center">
+        <TouchableOpacity className="flex-row items-center mr-4">
           <FontAwesome name="comment-o" size={20} color="black" />
           <Text className="ml-2 font-psemibold">Bình luận</Text>
         </TouchableOpacity>
