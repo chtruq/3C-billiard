@@ -12,7 +12,6 @@ const Profile = () => {
     setIsLogged(false);
     setUser(null);
   };
-  // console.log("user", user);
 
   return (
     <SafeAreaView>
