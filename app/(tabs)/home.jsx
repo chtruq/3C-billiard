@@ -15,12 +15,15 @@ import { Feather } from "@expo/vector-icons";
 import UserPost from "../../components/home/UserPost";
 import UserAvatar from "../../components/home/UserAvatar";
 import UserComment from "../../components/home/UserComment";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Home = () => {
   const logo = require("../../assets/3C-Icon.png");
   // const searchIcon = require("../../assets/search-normal.png");
 
   const avatar = require("../../assets/3C-Icon.png");
+
+  const { user } = useGlobalContext();
 
   return (
     <KeyboardAvoidingView
@@ -113,6 +116,10 @@ const Home = () => {
           </View>
         </View>
         {/* </SafeAreaView> */}
+
+        {/* <View>
+          <Text>{user ? user.email : "nothing"}</Text>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

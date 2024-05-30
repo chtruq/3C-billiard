@@ -9,24 +9,88 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
 import { Link, router } from "expo-router";
 import TextField from "../../components/TextField";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import { login } from "../../lib/action/users";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+import Button from "../../components/Button";
 
 const SignIn = () => {
-  const [text, onChangeText] = React.useState("");
-  const [number, onChangeNumber] = React.useState("");
-
   const mailIcon = require("../../assets/mail.png");
   const passwordIcon = require("../../assets/lock.png");
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUser, setIsLogged, user } = useGlobalContext();
+
+  //validate
+  const [form, setForm] = useState({
+    mail: "trung@gmail.com",
+    password: "123@abcD",
+  });
+
+  const validate = () => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (form.mail === "") {
+      alert("Vui lòng nhập email");
+      return false;
+    }
+    if (!emailRegex.test(form.mail)) {
+      alert("Email không hợp lệ");
+      return false;
+    }
+    if (form.password === "") {
+      alert("Vui lòng nhập mật khẩu");
+      return false;
+    }
+    // if (!passwordRegex.test(form.password)) {
+    //   alert(
+    //     "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt"
+    //   );
+    //   return false;
+    // }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (validate()) {
+      setIsLoading(true);
+      try {
+        await login(form.password, form.mail);
+        const token = await AsyncStorage.getItem("token");
+        const decoded = jwtDecode(token);
+        if (token) {
+          setUser(decoded);
+          setIsLogged(true);
+          router.replace("/home");
+        } else {
+          alert("Đăng nhập thất bại");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
+        {isLoading && (
+          <View className="absolute top-0 left-0 w-full h-full bg-transparent bg-opacity-20 flex-row justify-center items-center z-50">
+            <ActivityIndicator size="large" color="primary" />
+          </View>
+        )}
         <ScrollView>
           <View className="m-4">
             <View className="items-center mt-10">
@@ -42,50 +106,24 @@ const SignIn = () => {
             </View>
 
             <View className="mt-[20%]">
-              {/* <View>
-            <Text className="text-lg text-gray-500">Email</Text>
-            <View className="border-b-2 border-gray-300 flex-row justify-between">
-              <TextInput
-                placeholder="username@example.com"
-                onChangeText={onChangeText}
-                value={text}
-                className="text-lg pt-3"
-              />
-              <Image
-                source={require("../../assets/mail.png")}
-                className="mt-4"
-              />
-            </View>
-          </View> */}
               <TextField
                 fieldName="Email"
                 placeholder="username@example.com"
-                onChange={onChangeText}
-                value={text}
+                handleChangeText={(e) => {
+                  setForm({ ...form, mail: e });
+                }}
+                value={form.mail}
                 icon={mailIcon}
               />
               <TextField
                 fieldName="Mật khẩu"
                 placeholder="************"
-                onChange={onChangeText}
-                value={text}
-                icon={passwordIcon}
+                handleChangeText={(e) => {
+                  setForm({ ...form, password: e });
+                }}
+                value={form.password}
+                // icon={passwordIcon}
               />
-              {/* <View className="mt-4">
-            <Text className="text-lg text-gray-500">Password</Text>
-            <View className="border-b-2 border-gray-300 flex-row justify-between">
-              <TextInput
-                placeholder="************"
-                onChangeText={onChangeText}
-                value={text}
-                className="text-lg pt-3"
-              />
-              <Image
-                source={require("../../assets/lock.png")}
-                className="mt-4"
-              />
-            </View>
-          </View> */}
             </View>
             <View className="flex-row justify-end w-[100%] mt-2">
               <Link className="text-lg" href="/forgot-password">
@@ -94,19 +132,15 @@ const SignIn = () => {
             </View>
 
             <View className="mt-5">
-              <TouchableOpacity
-                onPress={() => {
-                  router.push("/home");
+              <Button
+                title={"Đăng nhập"}
+                onSubmit={() => {
+                  handleSubmit();
                 }}
-                className="py-4 bg-primary rounded-3xl border-2"
-              >
-                <Text className="text-white text-base font-psemibold text-center">
-                  Đăng nhập
-                </Text>
-              </TouchableOpacity>
+              />
               <TouchableOpacity
                 onPress={() => {
-                  router.push("/home");
+                  // router.push("/home");
                 }}
                 className="bg-white rounded-3xl border-2 mt-4"
               >

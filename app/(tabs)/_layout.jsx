@@ -1,6 +1,7 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const TabIcon = ({ activeIcon, inactiveIcon, color, name, focused }) => {
   return (
@@ -30,6 +31,10 @@ const TabsLayout = () => {
   const inactiveNotification = require("../../assets/tabicon/Notidisactive.png");
   const activeProfile = require("../../assets/tabicon/Inforactive.png");
   const inactiveProfile = require("../../assets/tabicon/Infordisactive.png");
+
+  const { loading, isLogged } = useGlobalContext();
+
+  if (!loading && !isLogged) return <Redirect href="/signin" />;
 
   return (
     <Tabs screenOptions={{ tabBarShowLabel: false }}>
