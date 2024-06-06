@@ -24,12 +24,12 @@ const TextField = ({
   return (
     <View className="mt-2">
       <Text className="text-lg text-gray-500">{fieldName}</Text>
-      <View className="border-b-2 border-gray-300 w-[100%] flex-row justify-between">
+      <View className=" border-b-2 border-gray-300 w-[100%] flex-row justify-between">
         <TextInput
           placeholder={placeholder}
           onChangeText={handleChangeText}
           value={value}
-          className="text-lg pt-3 w-[90%]"
+          className="text-lg pt-3 w-[90%] mb-1"
           secureTextEntry={fieldName === "Mật khẩu" && !showPassword}
           {...props}
         />

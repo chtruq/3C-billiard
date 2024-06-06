@@ -71,6 +71,15 @@ const RootLayout = () => {
           name="booking-clb"
           options={{
             headerTitle: "Đặt bàn",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="profile-detail"
+          options={{
+            headerTitle: "Hồ sơ",
+            headerBackTitle: "Quay lại",
+            headerShown: false,
           }}
         />
       </Stack>

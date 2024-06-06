@@ -9,17 +9,39 @@ import {
   Keyboard,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Entypo } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import SearchGroup from "../../components/booking/SearchGroup";
 import Club from "../../components/booking/club";
+import { getAllBidaClubs } from "../../lib/action/bidaclubs";
 const Booking = () => {
   const province = "Hồ Chí Minh";
   const district = "Thủ Đức";
   const ward = "Hiệp Bình Chánh";
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllBidaClubs();
+      setData(res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  console.log("data", data);
 
   const clbida = [
     {
@@ -94,8 +116,9 @@ const Booking = () => {
               <Text className="font-pbold text-lg">Phòng chơi gần đây</Text>
             </View>
             {/* list clb */}
+            {isLoading && <ActivityIndicator size="large" color="#e12727" />}
             <ScrollView>
-              {clbida.map((item, index) => (
+              {data.map((item, index) => (
                 <Club key={item.id} style="w-100" data={item} />
               ))}
             </ScrollView>

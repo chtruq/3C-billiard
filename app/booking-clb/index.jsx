@@ -5,33 +5,134 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import DatePicker from "react-native-modern-datepicker";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import { getBidaTableById } from "../../lib/action/bidaTable";
+import {
+  getBidaTableSlot,
+  getBidaTableSlotByTableId,
+} from "../../lib/action/bidaTableSlot";
+import { isLoading } from "expo-font";
+import { bookingBidaSlot } from "../../lib/action/booking";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Table = ({ table }) => {
-  const [isSelected, setIsSelected] = useState(false);
+const Agenda = ({ onDateChange }) => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [seventhDay, setSeventhDay] = useState(new Date());
 
-  const handlePress = () => {
-    setIsSelected(!isSelected);
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const monthNames = [
+    "Tháng 1",
+    "Tháng 2",
+    "Tháng 3",
+    "Tháng 4",
+    "Tháng 5",
+    "Tháng 6",
+    "Tháng 7",
+    "Tháng 8",
+    "Tháng 9",
+    "Tháng 10",
+    "Tháng 11",
+    "Tháng 12",
+  ];
+
+  useEffect(() => {
+    const next7days = new Date();
+    next7days.setDate(next7days.getDate() + 7);
+    setSeventhDay(next7days);
+  }, []);
+
+  //make the format date
+
+  //make the array from current date to seventh day
+  const makeDateArray = (start, end) => {
+    const arr = [];
+    for (
+      let dt = new Date(start);
+      dt <= new Date(end);
+      dt.setDate(dt.getDate() + 1)
+    ) {
+      arr.push(new Date(dt));
+    }
+    return arr;
   };
+
+  const dateArray = makeDateArray(currentDate, seventhDay);
+
+  //format dateArray YY/MM/DD
+
+  const formattedDateArray = dateArray.map((date) => {
+    let year = date.getFullYear().toString().slice(-2); // get last two digits of year
+    let month = ("0" + (date.getMonth() + 1)).slice(-2); // get month and pad with 0 if necessary
+    let day = ("0" + date.getDate()).slice(-2); // get day and pad with 0 if necessary
+    return `${year}/${month}/${day}`;
+  });
+
+  useEffect(() => {
+    setSelectedDate(formattedDateArray[0]);
+  }, []);
+
   return (
-    <TouchableOpacity className="mx-2 items-center" onPress={handlePress}>
+    <View>
+      <View className="my-2">
+        <Text className="font-pmedium text-base text-center">
+          {monthNames[currentMonth]} {currentYear}
+        </Text>
+      </View>
+      <View className="items-center">
+        <FlatList
+          data={formattedDateArray}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              className={`${
+                selectedDate == item ? "bg-primary" : ""
+              } rounded-full border p-2 m-1 w-10 h-10 justify-center items-center`}
+              onPress={() => {
+                setSelectedDate(item);
+                onDateChange(item);
+              }}
+            >
+              <Text
+                className={`${
+                  selectedDate == item ? "text-white" : ""
+                } font-pmedium text-sm`}
+              >
+                {item.slice(6, 8)}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </View>
+  );
+};
+
+const Table = ({ table, onPress, isSelected }) => {
+  return (
+    <TouchableOpacity
+      className="mx-2 items-center"
+      onPress={() => {
+        onPress(table);
+      }}
+    >
       <View style={{ opacity: isSelected ? 0.5 : 1 }}>
         <Image source={require("../../assets/table.png")} />
-        {/* {isSelected && (
-          <View>
-            <Entypo name="check" size={24} color="black" />
-          </View>
-        )} */}
       </View>
       <Text
         className={`font-pbold text-base ${isSelected ? "text-gray-400" : ""}`}
       >
-        {table.name}
+        {table.tableName}
       </Text>
       <Text
         className={`font-pbold  text-base ${
@@ -44,15 +145,25 @@ const Table = ({ table }) => {
   );
 };
 
-const AvailableTime = ({ slot, status }) => {
-  const [isSelected, setIsSelected] = useState(false);
+const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
+  const isSelected = selectedSlots.some(
+    (slot) => slot.table.id === table.id && slot.time.id === data.id
+  );
 
   const handlePress = () => {
-    setIsSelected(!isSelected);
+    if (!isSelected) {
+      setSelectedSlots((prevSlots) => [...prevSlots, { table, time: data }]);
+    } else {
+      setSelectedSlots((prevSlots) =>
+        prevSlots.filter(
+          (slot) => slot.table.id !== table.id || slot.time.id !== data.id
+        )
+      );
+    }
   };
   return (
     <View>
-      {status === "available" ? (
+      {data.status === "ACTIVE" ? (
         <TouchableOpacity
           onPress={handlePress}
           className={`mx-2 my-2 items-center w-20 rounded-md border ${
@@ -63,13 +174,15 @@ const AvailableTime = ({ slot, status }) => {
             <Text
               className={`font-pbold text-base ${isSelected && "text-primary"}`}
             >
-              {slot}
+              {data.slotStartTime.split(":").slice(0, 2).join(":")}
             </Text>
           </View>
         </TouchableOpacity>
       ) : (
         <View className="mx-2 my-2 items-center w-20 rounded-md border border-gray-300">
-          <Text className="font-pbold text-gray-300 text-base">{slot}</Text>
+          <Text className="font-pbold text-gray-300 text-base">
+            {data.slotStartTime}
+          </Text>
         </View>
       )}
     </View>
@@ -78,156 +191,226 @@ const AvailableTime = ({ slot, status }) => {
 
 const BookingClb = () => {
   const { id } = useLocalSearchParams("id");
-  const [selectedDate, setSelectedDate] = useState("");
+  const { user } = useGlobalContext();
   const currentDate = new Date();
+  //format date YY/MM/DD
+  let year = currentDate.getFullYear().toString().slice(-2);
+  let month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+  let day = ("0" + currentDate.getDate()).slice(-2);
+  const formattedCurrentDate = `${year}/${month}/${day}`;
+
+  const [selectedDate, setSelectedDate] = useState(formattedCurrentDate);
+  const [tableData, setTableData] = useState([]);
+  const [time, setTime] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [isSlotLoading, setIsSlotLoading] = useState(false);
+  const [isTableLoading, setIsTableLoading] = useState(false);
+  const [totalVND, setTotalInVND] = useState(0);
+
+  const [selectedSlots, setSelectedSlots] = useState([]);
 
   //format date YY/MM/DD
-  const date = currentDate.getDate();
-  const month = currentDate.getMonth() + 1;
-  const year = currentDate.getFullYear();
-  const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${
-    date < 10 ? `0${date}` : date
-  }`;
 
-  const time = [
-    { slot: "5:00", status: "available" },
-    { slot: "6:00", status: "available" },
-    { slot: "7:00", status: "available" },
-    { slot: "8:00", status: "available" },
-    { slot: "9:00", status: "available" },
-    { slot: "10:00", status: "available" },
-    { slot: "11:00", status: "available" },
-    { slot: "12:00", status: "available" },
-    { slot: "13:00", status: "available" },
-    { slot: "14:00", status: "available" },
-    { slot: "15:00", status: "available" },
-    { slot: "16:00", status: "unavailable" },
-    { slot: "17:00", status: "unavailable" },
-    { slot: "18:00", status: "unavailable" },
-    { slot: "19:00", status: "unavailable" },
-    { slot: "20:00", status: "unavailable" },
-    { slot: "21:00", status: "available" },
-    { slot: "22:00", status: "available" },
-    { slot: "23:00", status: "available" },
-    { slot: "24:00", status: "available" },
-  ];
-
-  const data = {
-    table: "1",
-    slot: "11:00, 12:00, 13:00",
-    price: "60000",
+  const getBidaTable = async () => {
+    try {
+      setIsTableLoading(true);
+      const response = await getBidaTableById(id);
+      setTableData(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsTableLoading(false);
+    }
   };
 
-  const data1 = {
-    table: "2",
-    slot: "11:00",
-    price: "70000",
+  useEffect(() => {
+    getBidaTable();
+  }, []);
+
+  const getSlot = async (id) => {
+    try {
+      setIsSlotLoading(true);
+      const response = await getBidaTableSlotByTableId(id);
+      // const response = await getBidaTableSlot(id);
+      setTime(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSlotLoading(false);
+    }
   };
 
-  const slotCount1 = data.slot.split(",").length;
-  const slotCount2 = data1.slot.split(",").length;
-
-  // Convert the price strings to numbers and multiply by the number of slots
-  const totalPrice1 = Number(data.price) * slotCount1;
-  const totalPrice2 = Number(data1.price) * slotCount2;
-
-  // Add the total prices for both tables
-  const total = totalPrice1 + totalPrice2;
+  useEffect(() => {
+    if (selectedTable) {
+      getSlot(selectedTable.id);
+    }
+  }, [selectedTable]);
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
 
-  const totalInVND = formatter.format(total);
+  const slotsByTable = selectedSlots.reduce((acc, slot) => {
+    if (!acc[slot.table.tableName]) {
+      acc[slot.table.tableName] = slot.table.price;
+    } else {
+      acc[slot.table.tableName] += slot.table.price;
+    }
+    return acc;
+  }, {});
+
+  const totalFee = selectedSlots.reduce(
+    (total, slot) => total + Number(slot.table.price),
+    0
+  );
+  const roundedTotalFee = totalFee.toFixed(2);
+
+  useEffect(() => {
+    setTotalInVND(totalFee);
+  }, [totalFee]);
+
+  const onDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  useEffect(() => {
+    console.log("selected Date", selectedDate);
+  }, [selectedDate]);
+
+  const handleBooking = async () => {
+    const timeIds = selectedSlots.map((slot) => slot.time.id);
+    await AsyncStorage.removeItem("@timeIds");
+    await AsyncStorage.removeItem("@selectedSlots");
+    await AsyncStorage.removeItem("@selectedDate");
+
+    try {
+      if (selectedSlots.length === 0) {
+        return;
+      }
+
+      await AsyncStorage.setItem("@timeIds", JSON.stringify(timeIds));
+      await AsyncStorage.setItem(
+        "@selectedSlots",
+        JSON.stringify(selectedSlots)
+      );
+
+      await AsyncStorage.setItem("@selectedDate", JSON.stringify(selectedDate));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      router.push("/booking-clb/user-info");
+    }
+  };
 
   return (
     <ScrollView className="h-[100%] bg-white">
-      <Text className="font-pbold text-base ml-5 mt-2">Chọn ngày</Text>
+      <Text className="font-pbold text-lg ml-2 mt-2">Chọn ngày</Text>
       <View className="shadow-sm">
-        <DatePicker
-          options={{
-            backgroundColor: "#fff",
-            textHeaderColor: "#000",
-            textDefaultColor: "#000",
-            selectedTextColor: "#fff", // Change this to modify the text color of the selected date
-            mainColor: "#f00", // Change this to modify the background color of the selected date
-            textSecondaryColor: "#000",
-            borderColor: "rgba(122, 146, 165, 0.1)",
-          }}
-          current={formattedDate}
-          selected={formattedDate}
-          mode="calendar"
-          minuteInterval={30}
-        />
+        <Agenda onDateChange={onDateChange} />
       </View>
 
       <View className="border-t mx-4 border-gray-50"></View>
-      <Text className="font-pbold text-base ml-5 mt-2">Chọn bàn</Text>
+      <Text className="font-pbold text-base mx-2 my-2">Chọn bàn</Text>
 
-      <ScrollView className="m-2" horizontal>
-        <Table table={{ name: "Bàn 1", type: "Phăng" }} />
-        <Table table={{ name: "Bàn 2", type: "Phăng" }} />
-        <Table table={{ name: "Bàn 3", type: "Phăng" }} />
-        <Table table={{ name: "Bàn 4", type: "Lỗ" }} />
-        <Table table={{ name: "Bàn 5", type: "Lỗ" }} />
-        <Table table={{ name: "Bàn 6", type: "Lỗ" }} />
-        <Table table={{ name: "Bàn 7", type: "Lỗ" }} />
-        <Table table={{ name: "Bàn 8", type: "Phăng" }} />
-        <Table table={{ name: "Bàn 9", type: "Phăng" }} />
-        <Table table={{ name: "Bàn 10", type: "Phăng" }} />
+      <ScrollView className="mx-2" horizontal>
+        {isTableLoading && (
+          <View className="w-[95vw]">
+            <ActivityIndicator size="large" color="#E12727" />
+          </View>
+        )}
+        {tableData?.map((table) => (
+          <Table
+            key={table.id}
+            table={table}
+            onPress={() => setSelectedTable(table)}
+            isSelected={table === selectedTable}
+          />
+        ))}
       </ScrollView>
-      <Text className="font-pbold text-base ml-5 mt-2">Chọn giờ</Text>
-      <View>
-        <View className="flex-row flex-wrap">
-          {time.map((item) => (
-            <AvailableTime
-              key={item.slot}
-              slot={item.slot}
-              status={item.status}
-              style={{ width: "25%" }}
-            />
-          ))}
+
+      <View className="">
+        <Text className="mx-2 text-xl font-pbold">Chọn giờ</Text>
+        <View className="flex-row flex-wrap my-4">
+          {!selectedTable && (
+            <View className="mx-2">
+              <Text className="font-pmedium">
+                Chọn bàn để hiển thị các mốc thời gian trống của bàn đó
+              </Text>
+            </View>
+          )}
+          {isSlotLoading ? (
+            <View className="flex-row justify-center items-center w-[100vw]">
+              <ActivityIndicator size="large" color="#E12727" />
+            </View>
+          ) : (
+            <View className="flex-row flex-wrap">
+              {time.map((item) => (
+                <AvailableTime
+                  key={item.id}
+                  data={item}
+                  table={selectedTable}
+                  style={{ width: "25%" }}
+                  setSelectedSlots={setSelectedSlots}
+                  selectedSlots={selectedSlots}
+                />
+              ))}
+            </View>
+          )}
         </View>
       </View>
       <View className="border-t border-gray-100"></View>
 
-      <View className="mx-4">
+      <View className="mx-2">
         <Text className="text-xl font-pbold">Thanh toán</Text>
         <View>
-          <View className="flex-row justify-between">
-            <Text className="text-lg font-pregular">Bàn 1</Text>
-            <Text className="text-lg font-pregular">3 giờ</Text>
-          </View>
-          <View className="flex-row justify-between">
-            <Text className="text-lg font-pregular">Bàn 2</Text>
-            <Text className="text-lg font-pregular">1 giờ</Text>
-          </View>
+          {selectedSlots.length === 0 && (
+            <View className="mt-2">
+              <Text className="font-pmedium">
+                Chọn bàn và thời gian để hiển thị thông tin thanh toán
+              </Text>
+            </View>
+          )}
+
+          {Object.entries(slotsByTable).map(([tableName, total]) => (
+            <View key={tableName} className="flex-row justify-between">
+              <Text className="text-lg font-pregular">{tableName}</Text>
+              <Text className="text-lg font-pregular">
+                {/* {formatter.format(total)} */}
+                {total.toFixed(2)}
+              </Text>
+            </View>
+          ))}
         </View>
       </View>
 
       <View className="w-[100%] border my-6 border-gray-400"></View>
       <View className="flex-row justify-between mx-4 mb-44">
         <Text className="text-xl font-pbold">Tổng phí</Text>
-        <Text className="text-xl font-pbold">{totalInVND}</Text>
+        <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
       </View>
 
-      <View className="w-[100vw] items-center">
-        <TouchableOpacity
-          onPress={() => {
-            router.push("/booking-clb/detail-appointment");
-          }}
-          className="absolute bottom-6 w-[80%] items-center bg-primary p-4 rounded-lg "
-        >
-          <View className="flex-row items-center">
-            <Text className="text-base font-psemibold text-white">
-              Xác nhận đặt bàn
-            </Text>
-            <Text> </Text>
-            <FontAwesome5 name="calendar-alt" size={20} color="white" />
-          </View>
-        </TouchableOpacity>
-      </View>
+      {totalFee ? (
+        <View className="w-[100vw] items-center">
+          <TouchableOpacity
+            onPress={() => {
+              handleBooking();
+            }}
+            className="absolute bottom-6 w-[80%] items-center bg-primary p-4 rounded-lg "
+          >
+            <View className="flex-row items-center">
+              <Text className="text-base font-psemibold text-white">
+                Xác nhận đặt bàn
+              </Text>
+              <Text> </Text>
+              <FontAwesome5 name="calendar-alt" size={20} color="white" />
+            </View>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View className=""></View>
+      )}
     </ScrollView>
   );
 };

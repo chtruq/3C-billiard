@@ -1,4 +1,4 @@
-import { Link, router, useFocusEffect } from "expo-router";
+import { Link, SplashScreen, router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,

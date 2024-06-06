@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   router,
   useGlobalSearchParams,
@@ -8,8 +8,23 @@ import {
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import { getBidaClubsByID } from "../../lib/action/bidaclubs";
 const BilliardDetail = () => {
   const { id } = useLocalSearchParams("id");
+  const [data, setData] = useState(null);
+
+  const getBidaClubID = async () => {
+    try {
+      const response = await getBidaClubsByID(id);
+      setData(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getBidaClubID();
+  }, []);
 
   return (
     <View className="bg-white h-[100%]">
@@ -21,8 +36,10 @@ const BilliardDetail = () => {
       </View>
       <View>
         <View className="flex-row justify-between items-center p-2 mx-3">
-          <Text className="font-pbold text-base">CLB Bida Đỗ Vương</Text>
-          <Text className="font-pbold text-primary text-base">89.000/giờ</Text>
+          <Text className="font-pbold text-base">{data?.bidaName}</Text>
+          <Text className="font-pbold text-primary text-base">
+            {data?.averagePrice}/giờ
+          </Text>
         </View>
         <View className="mx-5">
           <View className="flex-row items-center pt-1">
@@ -32,13 +49,15 @@ const BilliardDetail = () => {
               color="rgb(225 39 39)"
             />
             <Text className="ml-3 text-gray-500 text-sm font-pregular">
-              178, Hoàng Diệu 2, Linh Chiểu, Thủ Đức
+              {data?.address
+                ? data.address
+                : "178, Hoàng Diệu 2, Linh Chiểu, Thủ Đức"}
             </Text>
           </View>
           <View className="flex-row items-center pt-1">
             <AntDesign name="clockcircleo" size={16} color="rgb(225 39 39)" />
             <Text className="ml-2 text-gray-500 text-sm font-pregular">
-              Open: 5:00-22:00
+              Open: {data?.openingHours}
             </Text>
           </View>
           <View className="flex-row items-center pt-1">
@@ -52,9 +71,8 @@ const BilliardDetail = () => {
           <Text className="font-pbold text-base">Mô tả</Text>
           <View>
             <Text className="text-gray-500 text-sm font-pregular">
-              Sở hữu sân chơi Billards “xịn xò” có 1-0-2 cùng đội ngũ nhân viên
-              tận tình, chuyên nghiệp, khách hàng đến với Billiards Số 9
-              <Text className="text-primary"> Read More. . .</Text>
+              {data?.descrpition}
+              {/* <Text className="text-primary"> Read More. . .</Text> */}
             </Text>
           </View>
         </View>

@@ -8,13 +8,30 @@ const BookingLayout = () => {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Đặt bàn",
+          headerBackButtonMenuEnabled: true,
         }}
       />
       <Stack.Screen
         name="detail-appointment"
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Đặt bàn",
+        }}
+      />
+      <Stack.Screen
+        name="confirmation-waiting"
+        options={{
+          headerShown: true,
+          headerTitle: "Xác nhận",
+        }}
+      />
+      <Stack.Screen
+        name="user-info"
+        options={{
+          headerShown: true,
+          headerTitle: "Thông tin yêu cầu",
         }}
       />
     </Stack>
