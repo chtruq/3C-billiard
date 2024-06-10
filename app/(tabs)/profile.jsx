@@ -33,7 +33,7 @@ const Profile = () => {
             <View className="flex-row items-center mt-4">
               <Feather name="phone" size={20} color="black" />
               <Text className="ml-2 text-base font-pmedium">
-                {user.phone || "chưa có số điện thoại"}
+                {user.Phone || "chưa có số điện thoại"}
               </Text>
             </View>
             <View className="flex-row items-center">
@@ -54,13 +54,23 @@ const Profile = () => {
       </View>
 
       <View className="mt-4">
-        <ProfileItem title={"Bài viết của bạn"} icon={post} />
+        <ProfileItem goTo={"/home"} title={"Bài viết của bạn"} icon={post} />
         <ProfileItem
           title={"Đặt bàn"}
           icon={ticket}
-          goTo={"profile-detail/booking-history"}
+          goTo={"profile-detail/booking"}
         />
-        <ProfileItem title={"Đăng kí mở câu lạc bộ"} icon={clubregister} />
+        <ProfileItem
+          goTo={
+            user.role === "Bida Owner"
+              ? "profile-detail/club-owned"
+              : "profile-detail/club-register"
+          }
+          title={
+            user.role === "Bida Owner" ? "Câu lạc bộ" : "Đăng kí mở câu lạc bộ"
+          }
+          icon={clubregister}
+        />
         <ProfileItem title={"Thay đổi mật khẩu"} icon={changepass} />
       </View>
       <TouchableOpacity

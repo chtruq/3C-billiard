@@ -27,9 +27,14 @@ const SignIn = () => {
   const { setUser, setIsLogged, user } = useGlobalContext();
 
   //validate
+  // const [form, setForm] = useState({
+  //   mail: "trung@gmail.com",
+  //   password: "123@abcD",
+  // });
+
   const [form, setForm] = useState({
-    mail: "trung@gmail.com",
-    password: "123@abcD",
+    mail: "exe201@gmail.com",
+    password: "hung123",
   });
 
   const validate = () => {

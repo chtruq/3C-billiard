@@ -4,8 +4,9 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import Totalbooking from "../../components/booking/totalbooking";
@@ -21,7 +22,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { bookingBidaSlot } from "../../lib/action/booking";
 import Button from "../../components/Button";
-const DetailAppoinment = () => {
+import * as MediaLibrary from "expo-media-library";
+import { captureRef } from "react-native-view-shot";
+const BookingSuccess = () => {
   const [slotId, setSlotId] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -29,11 +32,16 @@ const DetailAppoinment = () => {
   const [orderCode, setOrderCode] = useState(null);
 
   const [userForm, setUserForm] = useState(null);
-
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+  const imageRef = useRef();
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   });
+
+  if (status === null) {
+    requestPermission();
+  }
 
   const getTimeIdsAndSelectedSlots = async () => {
     try {
@@ -112,59 +120,45 @@ const DetailAppoinment = () => {
   }, []);
   useEffect(() => {}, [userForm]);
 
-  const handleBooking = async () => {
-    // router.push("/booking-clb/momo-payment");
-    await AsyncStorage.removeItem("@totalPrice");
-    if (userForm.paymentMethod == "momo") {
-      await AsyncStorage.setItem("@totalPrice", totalPrice.toString());
-      console.log("momo");
-      router.push("/booking-clb/momo-payment");
+  const onSaveImageAsync = async () => {
+    try {
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
 
-      return;
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        alert("Đã lưu!");
+      }
+    } catch (e) {
+      console.log(e);
     }
-    if (userForm.paymentMethod == "cash") {
-      router.push("/booking-clb/success");
-      return;
-    }
-    // if (!userForm) {
-    //   router.push("/booking-clb/user-info");
-    //   return;
-    // }
-
-    // try {
-    //   const response = await bookingBidaSlot(user.userid, selectedDate, slotId);
-    //   console.log("response", response);
-    //   console.log("OrderCode", response.orderCode);
-    //   setOrderCode(response.orderCode);
-    // } catch (error) {
-    //   console.log(error);
-    // } finally {
-    //   console.log("orderCode", orderCode);
-    //   AsyncStorage.removeItem("timeIds");
-    //   AsyncStorage.removeItem("selectedSlots");
-    //   AsyncStorage.removeItem("selectedDate");
-    //   router.replace({
-    //     pathname: "/booking-clb/confirmation-waiting",
-    //     params: {
-    //       orderCode: orderCode,
-    //     },
-    //   });
-    // }
-  };
-
-  const handlePayment = () => {
-    router.push("/booking-clb/momo-payment");
   };
 
   return (
-    <View>
+    <View ref={imageRef} collapsable={false}>
       <ImageBackground
         className="h-[100vh]"
         source={require("../../assets/background.png")}
       >
         <View>
-          <View className="w-[100%] items-center justify-center">
-            <View className="w-[90%] flex-row mt-16 rounded-md border bg-white">
+          <View className="w-[100%] items-center justify-center mt-2">
+            <View>
+              <Image
+                source={require("../../assets/Subtract.png")}
+                className="opacity-75 h-20 w-20"
+              />
+            </View>
+            <Text className="text-center text-xl font-pbold">Chờ xác nhận</Text>
+            <Text className="text-center text-base mx-14 font-pmedium">
+              Tiến trình sẽ tốn từ 15 đến 30 phút xin quý khách hàng thông cảm.
+            </Text>
+          </View>
+        </View>
+        <View className="absolute bottom-0 bg-white h-[80vh] w-[100%] rounded-t-3xl border border-gray-200 shadow-lg">
+          <View className="items-center">
+            <View className="w-[90%] flex-row mt-5 rounded-md border items-center bg-white">
               <Image
                 source={require("../../assets/clubImage.png")}
                 className="w-[80px] h-[80px] m-2"
@@ -182,8 +176,7 @@ const DetailAppoinment = () => {
               </View>
             </View>
           </View>
-        </View>
-        <View className="absolute bottom-4 bg-white h-[70vh] w-[100%] rounded-t-3xl border border-gray-200 shadow-lg">
+
           <View>
             <Text className="mx-4 mt-2 font-pbold text-lg">Thời gian</Text>
             <Text className="mx-4 mt-2font-psemibold text-base text text-gray-500">
@@ -235,30 +228,23 @@ const DetailAppoinment = () => {
               {totalPrice} đ
             </Text>
           </View>
-          <View className="w-[95vw] items-center absolute bottom-24 mx-2 ">
-            {/* <Button
-              title="Thanh toán"
-              onPress={() => {
-                router.push("/booking-clb/momo-payment");
-                console.log("momo");
-              }}
-              icon={<Entypo name="wallet" size={24} color="white" />}
-            /> */}
-
+          <View className=" flex-row justify-around mt-2">
+            <TouchableOpacity
+              onPress={() => router.replace("/home")}
+              className="bg-primary w-[45%] items-center mx-2 py-4 rounded-3xl border-2 border-primary"
+            >
+              <View>
+                <Text className="font-pbold text-white">Về Trang Chủ</Text>
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                handleBooking();
+                onSaveImageAsync();
               }}
-              className="py-4 bg-primary rounded-3xl border-2 w-full"
+              className="bg-white w-[45%] mx-2 items-center py-4 rounded-3xl border-2 border-primary"
             >
-              <View className="flex-row justify-center w-full">
-                <Text className=" text-white font-psemibold text-base ">
-                  {userForm?.paymentMethod === "momo"
-                    ? "Thanh toán"
-                    : "Đặt bàn"}
-                </Text>
-                <Text> </Text>
-                <Entypo name="wallet" size={24} color="white" />
+              <View>
+                <Text className="font-pbold text-primary">Tải hoá đơn</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -268,4 +254,4 @@ const DetailAppoinment = () => {
   );
 };
 
-export default DetailAppoinment;
+export default BookingSuccess;

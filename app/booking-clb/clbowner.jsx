@@ -191,7 +191,7 @@ const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
   );
 };
 
-const BookingClb = () => {
+const CLBOwner = () => {
   const { id } = useLocalSearchParams("id");
   const { user } = useGlobalContext();
   const currentDate = new Date();
@@ -389,56 +389,73 @@ const BookingClb = () => {
       </View>
       <View className="border-t border-gray-100"></View>
       <View>
-        <View className="mx-2">
-          <Text className="text-xl font-pbold">Thanh toán</Text>
-          <View>
-            {selectedSlots.length === 0 && (
-              <View className="mt-2">
-                <Text className="font-pmedium">
-                  Chọn bàn và thời gian để hiển thị thông tin thanh toán
-                </Text>
-              </View>
-            )}
+        {user.role !== "Bida Owner" && (
+          <View className="mx-2">
+            <Text className="text-xl font-pbold">Thanh toán</Text>
+            <View>
+              {selectedSlots.length === 0 && (
+                <View className="mt-2">
+                  <Text className="font-pmedium">
+                    Chọn bàn và thời gian để hiển thị thông tin thanh toán
+                  </Text>
+                </View>
+              )}
 
-            {Object.entries(slotsByTable).map(([tableName, total]) => (
-              <View key={tableName} className="flex-row justify-between">
-                <Text className="text-lg font-pregular">{tableName}</Text>
-                <Text className="text-lg font-pregular">
-                  {/* {formatter.format(total)} */}
-                  {total.toFixed(2)}
-                </Text>
-              </View>
-            ))}
+              {Object.entries(slotsByTable).map(([tableName, total]) => (
+                <View key={tableName} className="flex-row justify-between">
+                  <Text className="text-lg font-pregular">{tableName}</Text>
+                  <Text className="text-lg font-pregular">
+                    {/* {formatter.format(total)} */}
+                    {total.toFixed(2)}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
       </View>
       <View>
-        <View>
-          <View className="w-[100%] border my-6 border-gray-400"></View>
-          <View className="flex-row justify-between mx-4 mb-44">
-            <Text className="text-xl font-pbold">Tổng phí</Text>
-            <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
+        {user.role != "Bida Owner" && (
+          <View>
+            <View className="w-[100%] border my-6 border-gray-400"></View>
+            <View className="flex-row justify-between mx-4 mb-44">
+              <Text className="text-xl font-pbold">Tổng phí</Text>
+              <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
+            </View>
           </View>
-        </View>
+        )}
 
-        {totalFee ? (
-          <View className="w-[95vw] items-center absolute bottom-0 mx-2">
+        {user.role == "Bida Owner" ? (
+          <View className="w-[95vw] items-center mt-2 mx-2">
             <Button
-              title={"Xác nhận đặt bàn"}
-              icon={
-                <FontAwesome5 name="calendar-alt" size={20} color="white" />
-              }
+              title={"Xác nhận"}
               onSubmit={() => {
-                handleBooking();
+                handleConfirm();
               }}
             />
           </View>
         ) : (
-          <View className=""></View>
+          <>
+            {totalFee ? (
+              <View className="w-[95vw] items-center absolute bottom-0 mx-2">
+                <Button
+                  title={"Xác nhận đặt bàn"}
+                  icon={
+                    <FontAwesome5 name="calendar-alt" size={20} color="white" />
+                  }
+                  onSubmit={() => {
+                    handleBooking();
+                  }}
+                />
+              </View>
+            ) : (
+              <View className=""></View>
+            )}
+          </>
         )}
       </View>
     </ScrollView>
   );
 };
 
-export default BookingClb;
+export default CLBOwner;

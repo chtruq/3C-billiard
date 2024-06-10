@@ -2,15 +2,19 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { ActivityIndicator } from "react-native";
 
-const Button = ({ title, onSubmit, style }) => {
+const Button = ({ title, onSubmit, style, icon }) => {
   return (
     <TouchableOpacity
       onPress={onSubmit}
-      className="py-4 bg-primary rounded-3xl border-2"
+      className="py-4 bg-primary rounded-3xl border-2 w-full"
     >
-      <Text className="text-white text-base font-psemibold text-center">
-        {title}
-      </Text>
+      <View className="flex-row justify-center w-full">
+        <Text className="text-white text-base font-psemibold text-center">
+          {title}
+        </Text>
+        <Text> </Text>
+        <View>{icon}</View>
+      </View>
     </TouchableOpacity>
   );
 };

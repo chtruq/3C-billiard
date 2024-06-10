@@ -34,6 +34,28 @@ const BookingLayout = () => {
           headerTitle: "Thông tin yêu cầu",
         }}
       />
+
+      <Stack.Screen
+        name="momo-payment"
+        options={{
+          headerShown: true,
+          headerTitle: "Thanh toán",
+        }}
+      />
+      <Stack.Screen
+        name="success"
+        options={{
+          headerShown: true,
+          headerTitle: "Thành công",
+        }}
+      />
+      <Stack.Screen
+        name="clbowner"
+        options={{
+          headerShown: true,
+          headerTitle: "Đặt bàn",
+        }}
+      />
     </Stack>
   );
 };

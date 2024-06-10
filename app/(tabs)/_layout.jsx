@@ -71,7 +71,8 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="notification"
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Thông báo",
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               activeIcon={activeNotification}

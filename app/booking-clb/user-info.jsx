@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import TextField from "../../components/TextField";
@@ -21,9 +22,9 @@ const UserInfo = () => {
   const onPaymentMethodChange = (method) => {
     setPaymentMethod(method);
   };
-  useEffect(() => {
-    console.log("paymentMethod", paymentMethod);
-  }, [paymentMethod]);
+  // useEffect(() => {
+  //   console.log("paymentMethod", paymentMethod);
+  // }, [paymentMethod]);
 
   const [form, setForm] = useState({
     name: "trung",
@@ -58,7 +59,7 @@ const UserInfo = () => {
     if (!validateForm()) {
       return;
     }
-    console.log("form", form);
+    // console.log("form", form);
     await AsyncStorage.setItem("@booking-user-info", JSON.stringify(form));
     router.push("/booking-clb/detail-appointment");
   };
@@ -69,8 +70,8 @@ const UserInfo = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <View className="bg-white h-[100vh] ">
-          <View className="mx-2 h-[100vh]">
+        <ScrollView className="bg-white ">
+          <View className="mx-2 h-[85vh]">
             <TextField
               fieldName={"Họ tên"}
               placeholder={"Nhập họ tên"}
@@ -138,16 +139,11 @@ const UserInfo = () => {
                 // icon={require("../../assets/note.png")}
               />
             </View>
-            <View className="absolute bottom-28 w-[100%]">
-              <Button
-                title={"Đồng ý"}
-                onSubmit={() => {
-                  onSubmit();
-                }}
-              />
+            <View className="absolute bottom-0 w-[100%]">
+              <Button title={"Đồng ý"} onSubmit={onSubmit} />
             </View>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
