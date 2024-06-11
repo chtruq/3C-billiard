@@ -22,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "Billiard.C3"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +31,14 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a5088a6a-87e9-4cbb-b2ad-6f775648a154"
+      }
+    }
   }
 }
