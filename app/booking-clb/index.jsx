@@ -23,6 +23,7 @@ import { bookingBidaSlot } from "../../lib/action/booking";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../../components/Button";
+import moment from "moment";
 
 const Agenda = ({ onDateChange }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -129,7 +130,10 @@ const Table = ({ table, onPress, isSelected }) => {
       }}
     >
       <View style={{ opacity: isSelected ? 0.5 : 1 }}>
-        <Image source={require("../../assets/table.png")} />
+        <Image
+          className="w-16 h-16 rounded-full"
+          source={{ uri: table.image }}
+        />
       </View>
       <Text
         className={`font-pbold text-base ${isSelected ? "text-gray-400" : ""}`}
@@ -165,7 +169,7 @@ const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
   };
   return (
     <View>
-      {data.status === "ACTIVE" ? (
+      {data.booked === false ? (
         <TouchableOpacity
           onPress={handlePress}
           className={`mx-2 my-2 items-center w-20 rounded-md border ${
@@ -183,7 +187,7 @@ const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
       ) : (
         <View className="mx-2 my-2 items-center w-20 rounded-md border border-gray-300">
           <Text className="font-pbold text-gray-300 text-base">
-            {data.slotStartTime}
+            {data.slotStartTime.split(":").slice(0, 2).join(":")}
           </Text>
         </View>
       )}
@@ -230,10 +234,19 @@ const BookingClb = () => {
   }, []);
 
   const getSlot = async (id, date) => {
+    console.log("dateeeee", date);
+    //format selectedDate from DD/MM/YY to MM/DD/YY
+    let parts = date.split("/");
+    let formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
+    console.log("Formatted date: ", formattedDate);
+
     try {
       setIsSlotLoading(true);
-      // const response = await getBidaTableSlotByDateAndTableId(id, date);
-      const response = await getBidaTableSlotByTableId(id);
+      const response = await getBidaTableSlotByDateAndTableId(
+        formattedDate,
+        id
+      );
+      // const response = await getBidaTableSlotByTableId(id);
       // const response = await getBidaTableSlot(id);
       setTime(response);
       return response;
@@ -245,8 +258,6 @@ const BookingClb = () => {
   };
 
   useEffect(() => {
-    console.log("selectedTable", selectedTable);
-    console.log("selectedDate", selectedDate);
     //format selectedDate from YY/MM/DD to DD/MM/YY
     const date = selectedDate.split("/").reverse().join("/");
 
@@ -254,6 +265,10 @@ const BookingClb = () => {
       getSlot(selectedTable.id, date);
     }
   }, [selectedTable, selectedDate]);
+
+  useEffect(() => {
+    setSelectedSlots([]);
+  }, [selectedDate]);
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -347,14 +362,16 @@ const BookingClb = () => {
             <ActivityIndicator size="large" color="#E12727" />
           </View>
         )}
-        {tableData?.map((table) => (
-          <Table
-            key={table.id}
-            table={table}
-            onPress={() => setSelectedTable(table)}
-            isSelected={table === selectedTable}
-          />
-        ))}
+        {tableData
+          ?.filter((item) => item.status !== "DELETED")
+          .map((table) => (
+            <Table
+              key={table.id}
+              table={table}
+              onPress={() => setSelectedTable(table)}
+              isSelected={table === selectedTable}
+            />
+          ))}
       </ScrollView>
 
       <View className="">
@@ -373,7 +390,29 @@ const BookingClb = () => {
             </View>
           ) : (
             <View className="flex-row flex-wrap">
-              {time?.map((item) => (
+              {time
+                ?.filter((item) => {
+                  // Chuyển đổi thời gian item và thời gian hiện tại thành dạng số
+                  const itemTime = moment(
+                    `${selectedDate} ${item.slotStartTime}`,
+                    "YYYY-MM-DD HH:mm"
+                  ).valueOf();
+                  const currentTime = moment().valueOf();
+
+                  // Chỉ hiển thị những item có thời gian sau thời điểm hiện tại
+                  return itemTime > currentTime;
+                })
+                .map((item) => (
+                  <AvailableTime
+                    key={item.id}
+                    data={item}
+                    table={selectedTable}
+                    style={{ width: "25%" }}
+                    setSelectedSlots={setSelectedSlots}
+                    selectedSlots={selectedSlots}
+                  />
+                ))}
+              {/* {time?.map((item) => (
                 <AvailableTime
                   key={item.id}
                   data={item}
@@ -382,7 +421,7 @@ const BookingClb = () => {
                   setSelectedSlots={setSelectedSlots}
                   selectedSlots={selectedSlots}
                 />
-              ))}
+              ))} */}
             </View>
           )}
         </View>
@@ -415,14 +454,14 @@ const BookingClb = () => {
       <View>
         <View>
           <View className="w-[100%] border my-6 border-gray-400"></View>
-          <View className="flex-row justify-between mx-4 mb-44">
+          <View className="flex-row justify-between mx-4 mb-32">
             <Text className="text-xl font-pbold">Tổng phí</Text>
             <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
           </View>
         </View>
 
         {totalFee ? (
-          <View className="w-[95vw] items-center absolute bottom-0 mx-2">
+          <View className="absolute w-[95vw] items-center bottom-0 mx-2 mb-6">
             <Button
               title={"Xác nhận đặt bàn"}
               icon={

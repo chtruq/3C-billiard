@@ -4,6 +4,8 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -19,7 +21,10 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { bookingBidaSlot } from "../../lib/action/booking";
+import {
+  bookingAndGenerateBill,
+  bookingBidaSlot,
+} from "../../lib/action/booking";
 import Button from "../../components/Button";
 const DetailAppoinment = () => {
   const [slotId, setSlotId] = useState(null);
@@ -27,9 +32,9 @@ const DetailAppoinment = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const { user } = useGlobalContext();
   const [orderCode, setOrderCode] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [userForm, setUserForm] = useState(null);
-
+  const [billId, setBillId] = useState(null);
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -114,50 +119,102 @@ const DetailAppoinment = () => {
 
   const handleBooking = async () => {
     // router.push("/booking-clb/momo-payment");
+    let date = selectedDate;
+    let [year, month, day] = date.split("/");
+    let formattedDate = new Date(`20${year}-${month}-${day}`).toISOString();
+
+    console.log("formattedDate", formattedDate);
+    setIsLoading(true);
     await AsyncStorage.removeItem("@totalPrice");
     if (userForm.paymentMethod == "momo") {
       await AsyncStorage.setItem("@totalPrice", totalPrice.toString());
-      console.log("momo");
-      router.push("/booking-clb/momo-payment");
+
+      try {
+        setIsLoading(true);
+        // const formData = new FormData();
+        // formData.append("userId", user.userid);
+        // formData.append("bookingDate", newFormat);
+        // // formData.append("bT_SlotIds", slotId);
+        // // formData.append("image", null);
+        // formData.append("orderCode", "");
+        // formData.append("paymentMethods", 0);
+        // formData.append("bookerName", userForm.name);
+        // formData.append("bookerPhone", userForm.phone);
+        // formData.append("bookerEmail", userForm.email);
+        // const config = {
+        //   headers: {
+        //     "content-type": "multipart/form-data",
+        //   },
+        //   transformRequest: () => {
+        //     return formData;
+        //   },
+        // };
+        const response = await bookingAndGenerateBill(
+          user.userid,
+          slotId,
+          formattedDate,
+          userForm
+        );
+        console.log("response.id", response.id);
+        setBillId(response.id);
+        console.log("billId", billId);
+        router.replace({
+          pathname: "/booking-clb/momo-payment",
+          params: { billId: response.id },
+        });
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.log(error.response.data);
+          Alert.alert("Có lỗi xảy ra trong quá trình đặt bàn");
+        } else {
+          console.log(error);
+          Alert.alert("Có lỗi xảy ra trong quá trình đặt bàn");
+        }
+      } finally {
+        setIsLoading(false);
+      }
 
       return;
     }
     if (userForm.paymentMethod == "cash") {
-      router.push("/booking-clb/success");
+      try {
+        const response = await bookingAndGenerateBill(
+          user.userid,
+          slotId,
+          formattedDate,
+          userForm
+        );
+        console.log("response", response);
+        router.replace("/booking-clb/success");
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.log(error.response.data);
+          Alert.alert("Có lỗi xảy ra trong quá trình đặt bàn");
+        } else {
+          console.log(error);
+          Alert.alert("Có lỗi xảy ra trong quá trình đặt bàn");
+        }
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
-    // if (!userForm) {
-    //   router.push("/booking-clb/user-info");
-    //   return;
-    // }
-
-    // try {
-    //   const response = await bookingBidaSlot(user.userid, selectedDate, slotId);
-    //   console.log("response", response);
-    //   console.log("OrderCode", response.orderCode);
-    //   setOrderCode(response.orderCode);
-    // } catch (error) {
-    //   console.log(error);
-    // } finally {
-    //   console.log("orderCode", orderCode);
-    //   AsyncStorage.removeItem("timeIds");
-    //   AsyncStorage.removeItem("selectedSlots");
-    //   AsyncStorage.removeItem("selectedDate");
-    //   router.replace({
-    //     pathname: "/booking-clb/confirmation-waiting",
-    //     params: {
-    //       orderCode: orderCode,
-    //     },
-    //   });
-    // }
   };
 
-  const handlePayment = () => {
-    router.push("/booking-clb/momo-payment");
-  };
+  // const checkLoading = () => {
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 1000);
+  // };
 
   return (
     <View>
+      {isLoading && (
+        <View className="z-30 inset-0 absolute top-0 left-0 w-full h-[90vh] bg-gray-600/50 flex-row items-center justify-center">
+          <ActivityIndicator size="large" color="#E12727" />
+        </View>
+      )}
       <ImageBackground
         className="h-[100vh]"
         source={require("../../assets/background.png")}
@@ -248,8 +305,9 @@ const DetailAppoinment = () => {
             <TouchableOpacity
               onPress={() => {
                 handleBooking();
+                // checkLoading();
               }}
-              className="py-4 bg-primary rounded-3xl border-2 w-full"
+              className="flex-row py-4 bg-primary rounded-3xl border-2 w-full"
             >
               <View className="flex-row justify-center w-full">
                 <Text className=" text-white font-psemibold text-base ">
@@ -260,6 +318,11 @@ const DetailAppoinment = () => {
                 <Text> </Text>
                 <Entypo name="wallet" size={24} color="white" />
               </View>
+              {isLoading && (
+                <View>
+                  <ActivityIndicator size="small" color="#fff" />
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>

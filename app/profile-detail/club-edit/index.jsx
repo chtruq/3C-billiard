@@ -15,12 +15,19 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import InputField from "../../../components/clb/InputField";
 import { Picker } from "@react-native-picker/picker";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { createBidaClub } from "../../../lib/action/bidaclubs";
-const ClubOwned = () => {
+import {
+  createBidaClub,
+  getBidaClubsByID,
+  updateBidaClub,
+} from "../../../lib/action/bidaclubs";
+const ClubEdit = () => {
+  const club = useLocalSearchParams("clubId");
+  const clubId = club?.clubId;
+  console.log("clubId", clubId);
   const [image, setImage] = useState(null);
   const [province, setProvince] = useState("Bình Dương");
   const [district, setDistrict] = useState("Dĩ An");
@@ -29,17 +36,47 @@ const ClubOwned = () => {
   const userId = user.userid;
   const [form, setForm] = useState({
     userId: userId,
-    bidaName: "Bida Hoàng Anh",
+    bidaName: "",
     image: "",
-    address: province + ", " + district + ", " + ward,
-    email: "hctrung2109@gmail.com",
-    description:
-      "Bida Hoàng Anh là một trong những câu lạc bộ bida hàng đầu tại Bình Dương. Với không gian rộng rãi, thoáng đãng, chúng tôi cam kết mang đến cho bạn những trải nghiệm tuyệt vời nhất khi đến với chúng tôi.",
-    phone: "0978654123",
-    openTime: "8:00",
-    closeTime: "23:00",
-    googleMapLink: "https://maps.app.goo.gl/k6SMUyQUFeWatZEy8",
+    address: province + " " + district + " " + ward,
+    email: "",
+    description: "",
+    phone: "",
+    openTime: "",
+    closeTime: "",
+    googleMapLink: "",
   });
+
+  const bidaClubData = async () => {
+    try {
+      const response = await getBidaClubsByID(clubId);
+      console.log(response);
+      setForm({
+        userId: userId,
+        bidaName: response.bidaName,
+        image: response.image,
+        address: response.address,
+        email: response.email,
+        description: response.description,
+        phone: response.phone,
+        openTime: response.openTime.split(":")[0] + ":00",
+        closeTime: response.closeTime.split(":")[0] + ":00",
+        googleMapLink: response.googleMapLink,
+      });
+      setImage(response.image);
+      setProvince(response.address.split(", ")[0]);
+      setDistrict(response.address.split(", ")[1]);
+      setWard(response.address.split(", ")[2]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (clubId) {
+      bidaClubData();
+    }
+  }, [clubId]);
 
   const pickerRef = useRef();
   const open = () => {
@@ -101,10 +138,10 @@ const ClubOwned = () => {
       return false;
     }
 
-    if (form.email.indexOf("@") === -1) {
-      Alert.alert("Email không hợp lệ");
-      return false;
-    }
+    // if (form.email.indexOf("@") === -1) {
+    //   Alert.alert("Email không hợp lệ");
+    //   return false;
+    // }
 
     if (form.openTime === form.closeTime) {
       Alert.alert("Giờ mở cửa và giờ đóng cửa không được trùng nhau");
@@ -138,7 +175,7 @@ const ClubOwned = () => {
       formData.append("userId", form.userId);
       formData.append("bidaName", form.bidaName);
       formData.append("address", form.address);
-      formData.append("email", form.email);
+      //   formData.append("email", form.email);
       formData.append("description", form.description);
       formData.append("phone", form.phone);
       formData.append("openTime", form.openTime);
@@ -157,7 +194,7 @@ const ClubOwned = () => {
           return formData;
         },
       };
-      const response = await createBidaClub(form, config);
+      const response = await updateBidaClub(form, config);
       console.log(response);
       router.back("profile-detail/club-owned");
     } catch (error) {
@@ -240,13 +277,13 @@ const ClubOwned = () => {
                 title={"Số điện thoại"}
                 number={true}
               />
-              <InputField
+              {/* <InputField
                 value={form.email}
                 onChange={(value) => {
                   setForm({ ...form, email: value });
                 }}
                 title={"Email"}
-              />
+              /> */}
               <InputField
                 value={form.googleMapLink}
                 onChange={(value) => {
@@ -299,7 +336,7 @@ const ClubOwned = () => {
               className="bg-primary rounded-xl py-4 w-full items-center justify-center"
             >
               <Text className="text-white text-base font-psemibold ">
-                Hoàn tất
+                Chỉnh sửa
               </Text>
             </TouchableOpacity>
           </View>
@@ -309,4 +346,4 @@ const ClubOwned = () => {
   );
 };
 
-export default ClubOwned;
+export default ClubEdit;

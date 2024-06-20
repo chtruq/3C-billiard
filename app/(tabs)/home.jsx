@@ -30,9 +30,17 @@ const Home = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView className="mt-10">
-        {/* <SafeAreaView> */}
-        <View className="">
+      <ScrollView className="mt-10 h-[100vh] top-[50%]">
+        <View className=" justify-center items-center">
+          <Text className="font-pbold">
+            Bài đăng hiện đang trong quá trình phát triển
+          </Text>
+          <Text className="font-pregular">
+            Bạn đã có thể đặt bàn ở tab{" "}
+            <Text className="text-primary font-pbold"> đặt bàn</Text>
+          </Text>
+        </View>
+        {/* <View className="">
           <View className="m-2 flex-row items-center justify-between">
             <View className="flex-row items-center">
               <Image source={logo} className="w-[50px] h-[50px] rounded-full" />
@@ -114,11 +122,6 @@ const Home = () => {
               </View>
             </View>
           </View>
-        </View>
-        {/* </SafeAreaView> */}
-
-        {/* <View>
-          <Text>{user ? user.email : "nothing"}</Text>
         </View> */}
       </ScrollView>
     </KeyboardAvoidingView>

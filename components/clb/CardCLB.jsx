@@ -6,28 +6,54 @@ const CardCLB = ({ data }) => {
   return (
     <View
       className={`h-[20vh] my-2 border rounded-md ${
-        data?.status === "waiting" && "border-orange-500"
-      } ${data?.status === "reject" && "border-primary"} ${
-        data?.status === "active" && "border-green-600"
+        data?.status === "WAITING" && "border-orange-500"
+      } ${data?.status === "DELETED" && "border-primary"} ${
+        data?.status === "ACTIVE" && "border-green-600"
       }  `}
     >
       <View className="mx-2">
-        <Text className="font-pbold text-lg">{data?.name || "name"}</Text>
-        <Text className="font-pmedium">{data?.address || "Address"}</Text>
+        <View className="flex-row justify-between">
+          <View className="w-[70%]">
+            <Text className="font-pbold text-lg">
+              {data?.bidaName || "name"}
+            </Text>
+            <Text className="font-pmedium">{data?.address || "Address"}</Text>
+          </View>
+          {data?.status === "ACTIVE" && (
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: "/profile-detail/confirm",
+                  params: { clubId: data?.id },
+                });
+              }}
+              className="mt-2 mr-2"
+            >
+              <Text className="font-pmedium">Các yêu cầu</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
         <View className="flex-row items-center justify-between mx-4 mt-10 ">
           <TouchableOpacity
             onPress={() => {
-              // router.push("/")
+              router.push({
+                pathname: "/profile-detail/club-edit",
+                params: { clubId: data?.id },
+              });
             }}
             className="items-center"
           >
             <Feather name="edit" size={24} color="black" />
             <Text>Chỉnh sửa</Text>
           </TouchableOpacity>
-          {data?.status === "active" && (
+          {data?.status === "ACTIVE" && (
             <TouchableOpacity
               onPress={() => {
-                router.push("/booking-clb/clbowner");
+                router.push({
+                  pathname: "/booking-clb/clbowner",
+                  params: { id: data?.id },
+                });
               }}
               className="items-center"
             >
@@ -39,10 +65,13 @@ const CardCLB = ({ data }) => {
             </TouchableOpacity>
           )}
 
-          {data?.status === "active" && (
+          {data?.status === "ACTIVE" && (
             <TouchableOpacity
               onPress={() => {
-                router.push("/profile-detail/table-owned");
+                router.push({
+                  pathname: "/profile-detail/table-owned",
+                  params: { clubId: data?.id },
+                });
               }}
               className="items-center"
             >
@@ -54,14 +83,14 @@ const CardCLB = ({ data }) => {
             </TouchableOpacity>
           )}
 
-          {data?.status === "reject" && (
+          {data?.status === "DELETED" && (
             <View className="bg-primary px-4 w-32 py-2 rounded-lg">
               <Text className="text-white font-pbold text-center">
                 Bị từ chối
               </Text>
             </View>
           )}
-          {data?.status === "waiting" && (
+          {data?.status === "WAITING" && (
             <View className="bg-orange-500 px-4 w-32 py-2 rounded-lg">
               <Text className="text-white font-pbold">Chờ xác nhận</Text>
             </View>

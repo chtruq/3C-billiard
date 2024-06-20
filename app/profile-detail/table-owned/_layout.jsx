@@ -22,6 +22,15 @@ const TableLayout = () => {
           headerBackTitle: "Quay lại",
         }}
       />
+      <Stack.Screen
+        name="edit-table"
+        options={{
+          headerShown: true,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Chỉnh sửa bàn",
+          headerBackTitle: "Quay lại",
+        }}
+      />
     </Stack>
   );
 };

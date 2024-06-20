@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,6 +25,7 @@ const Booking = () => {
   const ward = "Hiệp Bình Chánh";
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -37,54 +39,14 @@ const Booking = () => {
     }
   };
 
+  const onRefresh = React.useCallback(() => {
+    setIsRefreshing(true);
+    fetchData().finally(() => setIsRefreshing(false));
+  }, [data]);
+
   useEffect(() => {
     fetchData();
   }, []);
-
-  console.log("data", data);
-
-  const clbida = [
-    {
-      id: 1,
-      name: "CLB 3C",
-      price: "100.000đ/h",
-      address: "123 Phạm Văn Đồng",
-      star: "4.5",
-      distance: "1km",
-    },
-    {
-      id: 2,
-      name: "CLB 3C",
-      price: "100.000đ/h",
-      address: "123 Phạm Văn Đồng",
-      star: "4.5",
-      distance: "1km",
-    },
-    {
-      id: 3,
-      name: "CLB 3C",
-      price: "100.000đ/h",
-      address: "123 Phạm Văn Đồng",
-      star: "4.5",
-      distance: "1km",
-    },
-    {
-      id: 4,
-      name: "CLB 3C",
-      price: "100.000đ/h",
-      address: "123 Phạm Văn Đồng",
-      star: "4.5",
-      distance: "1km",
-    },
-    {
-      id: 5,
-      name: "CLB 3C",
-      price: "100.000đ/h",
-      address: "123 Phạm Văn Đồng",
-      star: "4.5",
-      distance: "1km",
-    },
-  ];
 
   return (
     <KeyboardAvoidingView
@@ -92,7 +54,12 @@ const Booking = () => {
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }
+          className="h-[100vw] bg-white"
+        >
           <View className="mt-11">
             <View className="p-2">
               <Text className="font-pmedium ml-2 text-gray-500">
@@ -116,11 +83,18 @@ const Booking = () => {
               <Text className="font-pbold text-lg">Phòng chơi gần đây</Text>
             </View>
             {/* list clb */}
-            {isLoading && <ActivityIndicator size="large" color="#e12727" />}
+            {isLoading && !isRefreshing && (
+              <View className="h-[70vh] items-center justify-center">
+                <ActivityIndicator size="large" color="#e12727" />
+              </View>
+            )}
+
             <ScrollView>
-              {data.map((item, index) => (
-                <Club key={item.id} style="w-100" data={item} />
-              ))}
+              {data
+                ?.filter((item) => item.status === "ACTIVE")
+                .map((item, index) => (
+                  <Club key={item.id} style="w-100" data={item} />
+                ))}
             </ScrollView>
           </View>
         </ScrollView>

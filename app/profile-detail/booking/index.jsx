@@ -1,17 +1,21 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TabsBooking from "../../../components/booking/TabsBooking";
 import { router } from "expo-router";
 import BookingStatus from "../../../components/booking/BookingStatus";
+import { bookingHistory } from "../../../lib/action/booking-history";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 
 const Booking = () => {
   const [active, setActive] = useState(true);
   const [history, setHistory] = useState(false);
-
+  const [booking, setBooking] = useState([]);
   // const onActiveChange = () => {
   //   setActive(!active);
   //   setHistory(!history);
   // };
+  const { user } = useGlobalContext();
+  const userId = user?.userid;
   const onChangeTabs = () => {
     setActive(!active);
     setHistory(!history);
@@ -66,6 +70,34 @@ const Booking = () => {
       avatar: require("../../../assets/avatar.png"),
     },
   ];
+
+  const onActiveChange = () => {
+    setActive(!active);
+    setHistory(!history);
+  };
+
+  const bookingData = async (userId) => {
+    try {
+      const response = await bookingHistory(userId);
+      console.log(response);
+      setBooking(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    bookingData(userId);
+  }, []);
+
+  if (booking) {
+    const activeBookingData = booking.filter(
+      (item) => item.status === "WAITING"
+    );
+    const historyBookingData = booking.filter(
+      (item) => item.status !== "WAITING"
+    );
+  }
 
   return (
     <View className="bg-white h-[100vh]">

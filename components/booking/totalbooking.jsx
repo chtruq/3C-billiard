@@ -16,18 +16,20 @@ const Totalbooking = ({ data }) => {
         <Text className="font-pregular text-lg">{data.price}đ</Text>
       </View>
       <View className="flex-row items-center justify-between mt-2">
-        <View className="flex-row">
+        <View className="flex-row w-[70%] flex-wrap">
           {data?.slotStartTimes.map((slot, index) => (
             <View
               key={index}
-              className="border mr-2 p-1 items-center rounded-lg"
+              className="border mr-2 p-1 items-center rounded-lg mb-1 w-14"
             >
-              <Text className="font-pregular">{slot}</Text>
+              <Text className="font-pregular">
+                {new Date(`1970-01-01T${slot}Z`).toISOString().substr(11, 5)}
+              </Text>
             </View>
           ))}
         </View>
 
-        <Text className="items-center font-pmedium text-sm text-gray-500">
+        <Text className="w-[50%]] items-center font-pmedium text-sm text-gray-500">
           {data?.slotStartTimes.length} giờ
         </Text>
       </View>

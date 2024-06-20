@@ -10,7 +10,7 @@ const BookingLayout = () => {
         options={{
           headerShown: true,
           headerTitle: "Đặt bàn",
-          headerBackButtonMenuEnabled: true,
+          headerBackButtonMenuEnabled: false,
         }}
       />
       <Stack.Screen
@@ -18,6 +18,8 @@ const BookingLayout = () => {
         options={{
           headerShown: true,
           headerTitle: "Đặt bàn",
+          headerBackButtonMenuEnabled: false,
+          headerBackTitle: "Quay lại",
         }}
       />
       <Stack.Screen
@@ -40,6 +42,7 @@ const BookingLayout = () => {
         options={{
           headerShown: true,
           headerTitle: "Thanh toán",
+          headerBackButtonMenuEnabled: false,
         }}
       />
       <Stack.Screen
@@ -54,6 +57,7 @@ const BookingLayout = () => {
         options={{
           headerShown: true,
           headerTitle: "Đặt bàn",
+          headerBackButtonMenuEnabled: false,
         }}
       />
     </Stack>

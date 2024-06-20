@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -19,10 +20,14 @@ import {
   getBidaTableSlotByTableId,
 } from "../../lib/action/bidaTableSlot";
 import { isLoading } from "expo-font";
-import { bookingBidaSlot } from "../../lib/action/booking";
+import {
+  bookingBidaSlot,
+  clubOwnerBookingBidaSlot,
+} from "../../lib/action/booking";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../../components/Button";
+import moment from "moment";
 
 const Agenda = ({ onDateChange }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -129,7 +134,10 @@ const Table = ({ table, onPress, isSelected }) => {
       }}
     >
       <View style={{ opacity: isSelected ? 0.5 : 1 }}>
-        <Image source={require("../../assets/table.png")} />
+        <Image
+          className="w-16 h-16 rounded-full"
+          source={{ uri: table.image }}
+        />
       </View>
       <Text
         className={`font-pbold text-base ${isSelected ? "text-gray-400" : ""}`}
@@ -165,7 +173,7 @@ const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
   };
   return (
     <View>
-      {data.status === "ACTIVE" ? (
+      {data.booked === false ? (
         <TouchableOpacity
           onPress={handlePress}
           className={`mx-2 my-2 items-center w-20 rounded-md border ${
@@ -183,7 +191,7 @@ const AvailableTime = ({ data, table, setSelectedSlots, selectedSlots }) => {
       ) : (
         <View className="mx-2 my-2 items-center w-20 rounded-md border border-gray-300">
           <Text className="font-pbold text-gray-300 text-base">
-            {data.slotStartTime}
+            {data.slotStartTime.split(":").slice(0, 2).join(":")}
           </Text>
         </View>
       )}
@@ -210,7 +218,7 @@ const CLBOwner = () => {
   const [totalVND, setTotalInVND] = useState(0);
 
   const [selectedSlots, setSelectedSlots] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   //format date YY/MM/DD
 
   const getBidaTable = async () => {
@@ -230,10 +238,19 @@ const CLBOwner = () => {
   }, []);
 
   const getSlot = async (id, date) => {
+    console.log("dateeeee", date);
+    //format selectedDate from DD/MM/YY to MM/DD/YY
+    let parts = date.split("/");
+    let formattedDate = `${parts[1]}/${parts[0]}/${parts[2]}`;
+    console.log("Formatted date: ", formattedDate);
+
     try {
       setIsSlotLoading(true);
-      // const response = await getBidaTableSlotByDateAndTableId(id, date);
-      const response = await getBidaTableSlotByTableId(id);
+      const response = await getBidaTableSlotByDateAndTableId(
+        formattedDate,
+        id
+      );
+      // const response = await getBidaTableSlotByTableId(id);
       // const response = await getBidaTableSlot(id);
       setTime(response);
       return response;
@@ -245,8 +262,6 @@ const CLBOwner = () => {
   };
 
   useEffect(() => {
-    console.log("selectedTable", selectedTable);
-    console.log("selectedDate", selectedDate);
     //format selectedDate from YY/MM/DD to DD/MM/YY
     const date = selectedDate.split("/").reverse().join("/");
 
@@ -254,6 +269,10 @@ const CLBOwner = () => {
       getSlot(selectedTable.id, date);
     }
   }, [selectedTable, selectedDate]);
+
+  useEffect(() => {
+    setSelectedSlots([]);
+  }, [selectedDate]);
 
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -283,9 +302,22 @@ const CLBOwner = () => {
     setSelectedDate(date);
   };
 
-  useEffect(() => {
-    console.log("selected Date", selectedDate);
-  }, [selectedDate]);
+  function formatDate(selectedDate) {
+    // Assuming selectedDate is in 'YY/MM/DD' format
+    let parts = selectedDate.split("/");
+    let formattedDate = new Date(`20${parts[0]}`, parts[1] - 1, parts[2]);
+
+    // Get the day, month and year
+    let day = formattedDate.getDate();
+    let month = formattedDate.getMonth() + 1; // Months are zero based
+    let year = formattedDate.getFullYear().toString().substr(-2); // Get last two digits of year
+
+    // Pad single digit day and month with zero
+    day = day < 10 ? "0" + day : day;
+    month = month < 10 ? "0" + month : month;
+
+    return `${month}/${day}/${year}`;
+  }
 
   const handleBooking = async () => {
     const timeIds = selectedSlots.map((slot) => slot.time.id);
@@ -293,22 +325,34 @@ const CLBOwner = () => {
     await AsyncStorage.removeItem("@selectedSlots");
     await AsyncStorage.removeItem("@selectedDate");
 
+    setIsLoading(true);
+
     try {
       if (selectedSlots.length === 0) {
         return;
       }
 
-      await AsyncStorage.setItem("@timeIds", JSON.stringify(timeIds));
-      await AsyncStorage.setItem(
-        "@selectedSlots",
-        JSON.stringify(selectedSlots)
-      );
+      // await AsyncStorage.setItem("@timeIds", JSON.stringify(timeIds));
+      // await AsyncStorage.setItem(
+      //   "@selectedSlots",
+      //   JSON.stringify(selectedSlots)
+      // );
+      // await AsyncStorage.setItem("@selectedDate", JSON.stringify(selectedDate));
 
-      await AsyncStorage.setItem("@selectedDate", JSON.stringify(selectedDate));
+      //change the format of selectedDate from YY/MM/DD to DD/MM/YY
+      const formattedDate = formatDate(selectedDate);
+
+      const response = await clubOwnerBookingBidaSlot(
+        user.userid,
+        formattedDate,
+        timeIds
+      );
     } catch (error) {
       console.log(error);
     } finally {
-      router.push("/booking-clb/user-info");
+      setIsLoading(false);
+      router.back();
+      Alert.alert("Đặt bàn thành công");
     }
   };
 
@@ -333,47 +377,77 @@ const CLBOwner = () => {
 
   return (
     <ScrollView className=" bg-white">
-      <Text className="font-pbold text-lg ml-2 mt-2">Chọn ngày</Text>
-      <View className="shadow-sm">
-        <Agenda onDateChange={onDateChange} />
-      </View>
-
-      <View className="border-t mx-4 border-gray-50"></View>
-      <Text className="font-pbold text-base mx-2 my-2">Chọn bàn</Text>
-
-      <ScrollView className="mx-2" horizontal>
-        {isTableLoading && (
-          <View className="w-[95vw]">
-            <ActivityIndicator size="large" color="#E12727" />
-          </View>
-        )}
-        {tableData?.map((table) => (
-          <Table
-            key={table.id}
-            table={table}
-            onPress={() => setSelectedTable(table)}
-            isSelected={table === selectedTable}
-          />
-        ))}
-      </ScrollView>
-
+      {isLoading && (
+        <View className="w-[100%] h-[100%] bg-transparent flex-row justify-center items-center">
+          <ActivityIndicator size="large" color="#E12727" />
+        </View>
+      )}
       <View className="">
-        <Text className="mx-2 text-xl font-pbold">Chọn giờ</Text>
-        <View className="flex-row flex-wrap my-4">
-          {!selectedTable && (
-            <View className="mx-2">
-              <Text className="font-pmedium">
-                Chọn bàn để hiển thị các mốc thời gian trống của bàn đó
-              </Text>
-            </View>
-          )}
-          {isSlotLoading ? (
-            <View className="flex-row justify-center items-center w-[100vw]">
+        <Text className="font-pbold text-lg ml-2 mt-2">Chọn ngày</Text>
+        <View className="shadow-sm">
+          <Agenda onDateChange={onDateChange} />
+        </View>
+
+        <View className="border-t mx-4 border-gray-50"></View>
+        <Text className="font-pbold text-base mx-2 my-2">Chọn bàn</Text>
+
+        <ScrollView className="mx-2" horizontal>
+          {isTableLoading && (
+            <View className="w-[95vw]">
               <ActivityIndicator size="large" color="#E12727" />
             </View>
-          ) : (
-            <View className="flex-row flex-wrap">
-              {time?.map((item) => (
+          )}
+          {tableData
+            ?.filter((item) => item.status !== "DELETED")
+            .map((table) => (
+              <Table
+                key={table.id}
+                table={table}
+                onPress={() => setSelectedTable(table)}
+                isSelected={table === selectedTable}
+              />
+            ))}
+        </ScrollView>
+
+        <View className="h-[45vh]">
+          <Text className="mx-2 text-xl font-pbold">Chọn giờ</Text>
+          <View className="flex-row flex-wrap my-4">
+            {!selectedTable && (
+              <View className="mx-2">
+                <Text className="font-pmedium">
+                  Chọn bàn để hiển thị các mốc thời gian trống của bàn đó
+                </Text>
+              </View>
+            )}
+            {isSlotLoading ? (
+              <View className="flex-row justify-center items-center w-[100vw]">
+                <ActivityIndicator size="large" color="#E12727" />
+              </View>
+            ) : (
+              <View className="flex-row flex-wrap">
+                {time
+                  ?.filter((item) => {
+                    // Chuyển đổi thời gian item và thời gian hiện tại thành dạng số
+                    const itemTime = moment(
+                      `${selectedDate} ${item.slotStartTime}`,
+                      "YYYY-MM-DD HH:mm"
+                    ).valueOf();
+                    const currentTime = moment().valueOf();
+
+                    // Chỉ hiển thị những item có thời gian sau thời điểm hiện tại
+                    return itemTime > currentTime;
+                  })
+                  .map((item) => (
+                    <AvailableTime
+                      key={item.id}
+                      data={item}
+                      table={selectedTable}
+                      style={{ width: "25%" }}
+                      setSelectedSlots={setSelectedSlots}
+                      selectedSlots={selectedSlots}
+                    />
+                  ))}
+                {/* {time?.map((item) => (
                 <AvailableTime
                   key={item.id}
                   data={item}
@@ -382,77 +456,60 @@ const CLBOwner = () => {
                   setSelectedSlots={setSelectedSlots}
                   selectedSlots={selectedSlots}
                 />
-              ))}
+              ))} */}
+              </View>
+            )}
+          </View>
+        </View>
+        {/* <View className="border-t border-gray-100"></View> */}
+        <View>
+          {/* <View className="mx-2">
+          <Text className="text-xl font-pbold">Thanh toán</Text>
+          <View>
+            {selectedSlots.length === 0 && (
+              <View className="mt-2">
+                <Text className="font-pmedium">
+                  Chọn bàn và thời gian để hiển thị thông tin thanh toán
+                </Text>
+              </View>
+            )}
+
+            {Object.entries(slotsByTable).map(([tableName, total]) => (
+              <View key={tableName} className="flex-row justify-between">
+                <Text className="text-lg font-pregular">{tableName}</Text>
+                <Text className="text-lg font-pregular">
+                  {total.toFixed(2)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View> */}
+        </View>
+        <View>
+          {/* <View>
+          <View className="w-[100%] border my-6 border-gray-400"></View>
+          <View className="flex-row justify-between mx-4 mb-32">
+            <Text className="text-xl font-pbold">Tổng phí</Text>
+            <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
+          </View>
+        </View> */}
+
+          {totalFee ? (
+            <View className="w-[95vw] items-center fixed bottom-0 mx-2 mb-6">
+              <Button
+                title={"Xác nhận "}
+                icon={
+                  <FontAwesome5 name="calendar-alt" size={20} color="white" />
+                }
+                onSubmit={() => {
+                  handleBooking();
+                }}
+              />
             </View>
+          ) : (
+            <View className=""></View>
           )}
         </View>
-      </View>
-      <View className="border-t border-gray-100"></View>
-      <View>
-        {user.role !== "Bida Owner" && (
-          <View className="mx-2">
-            <Text className="text-xl font-pbold">Thanh toán</Text>
-            <View>
-              {selectedSlots.length === 0 && (
-                <View className="mt-2">
-                  <Text className="font-pmedium">
-                    Chọn bàn và thời gian để hiển thị thông tin thanh toán
-                  </Text>
-                </View>
-              )}
-
-              {Object.entries(slotsByTable).map(([tableName, total]) => (
-                <View key={tableName} className="flex-row justify-between">
-                  <Text className="text-lg font-pregular">{tableName}</Text>
-                  <Text className="text-lg font-pregular">
-                    {/* {formatter.format(total)} */}
-                    {total.toFixed(2)}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-      </View>
-      <View>
-        {user.role != "Bida Owner" && (
-          <View>
-            <View className="w-[100%] border my-6 border-gray-400"></View>
-            <View className="flex-row justify-between mx-4 mb-44">
-              <Text className="text-xl font-pbold">Tổng phí</Text>
-              <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
-            </View>
-          </View>
-        )}
-
-        {user.role == "Bida Owner" ? (
-          <View className="w-[95vw] items-center mt-2 mx-2">
-            <Button
-              title={"Xác nhận"}
-              onSubmit={() => {
-                handleConfirm();
-              }}
-            />
-          </View>
-        ) : (
-          <>
-            {totalFee ? (
-              <View className="w-[95vw] items-center absolute bottom-0 mx-2">
-                <Button
-                  title={"Xác nhận đặt bàn"}
-                  icon={
-                    <FontAwesome5 name="calendar-alt" size={20} color="white" />
-                  }
-                  onSubmit={() => {
-                    handleBooking();
-                  }}
-                />
-              </View>
-            ) : (
-              <View className=""></View>
-            )}
-          </>
-        )}
       </View>
     </ScrollView>
   );

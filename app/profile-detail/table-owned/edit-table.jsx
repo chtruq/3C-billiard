@@ -1,30 +1,26 @@
 import {
   View,
   Text,
-  TouchableOpacity,
-  Image,
   ScrollView,
-  Alert,
   ActivityIndicator,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 import InputField from "../../../components/clb/InputField";
 import * as ImagePicker from "expo-image-picker";
-import { router, useLocalSearchParams } from "expo-router";
-import { createTableBida } from "../../../lib/action/bidaTable";
-const CreateTable = () => {
+import { getBidaTableByTableId } from "../../../lib/action/bidaTable";
+
+const EditTable = () => {
   const [image, setImage] = useState(null);
-  const club = useLocalSearchParams("clubId");
-  const clubId = club.clubId;
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({
-    id: clubId,
-    name: "",
-    price: "",
-    type: "",
-    image: "",
-  });
+  const id = useLocalSearchParams("tableId");
+  const tableId = id.tableId;
+  const bidaClub = useLocalSearchParams("clubId");
+  const bidaClubId = bidaClub.clubId;
+
+  const [form, setForm] = useState({});
 
   const onChange = (key, value) => {
     setForm({ ...form, [key]: value });
@@ -49,54 +45,25 @@ const CreateTable = () => {
     console.log("image", image);
   }, [image]);
 
-  const validateForm = () => {
-    if (!form.name || !form.price || !form.type) {
-      Alert.alert("Vui lòng điền đầy đủ thông tin");
-      return false;
-    }
-
-    if (!image) {
-      Alert.alert("Vui lòng chọn hình ảnh");
-      return false;
-    }
-    return true;
-  };
-
-  const createTable = async (data) => {
-    if (!validateForm()) {
-      return;
-    }
-
+  const getBidaTable = async (id) => {
     try {
       setIsLoading(true);
-      const formData = new FormData();
-      formData.append("BidaCludId", data.id);
-      formData.append("Price", data.price);
-      formData.append("TableName", data.name);
-      formData.append("Note", data.type);
-      formData.append("image", {
-        uri: image,
-        name: "createTable",
-        type: "image/png",
-      });
-      const config = {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-        transformRequest: () => {
-          return formData;
-        },
-      };
-      const response = await createTableBida(data, config);
-      return response;
+      const response = await getBidaTableByTableId(id);
+      setForm(response);
+      console.log("form", response);
+      return response.data;
     } catch (error) {
       console.log(error);
     } finally {
-      console.log("Create Table Success");
       setIsLoading(false);
-      router.back();
     }
   };
+
+  useEffect(() => {
+    getBidaTable(tableId);
+  }, []);
+
+  console.log("form", form.price);
 
   return (
     <ScrollView>
@@ -110,7 +77,7 @@ const CreateTable = () => {
           <Text className="text-lg font-psemibold">Thông tin về bàn bida </Text>
           <InputField
             title={"Tên bàn bida"}
-            value={form.name}
+            value={form.tableName}
             onChange={(text) => onChange("name", text)}
           />
           <InputField
@@ -121,8 +88,8 @@ const CreateTable = () => {
           <Text className="text-lg font-psemibold">Loại bàn bida </Text>
           <InputField
             title={"Phăng, pool, snooker,..."}
-            value={form.type}
-            onChange={(text) => onChange("type", text)}
+            value={form.note}
+            onChange={(text) => onChange("note", text)}
           />
           <Text className="text-lg font-psemibold">Hình của bàn </Text>
           <View className="flex-row">
@@ -144,6 +111,12 @@ const CreateTable = () => {
                 className="w-[30vw] h-[30vw] ml-2 rounded-lg"
               />
             )}
+            {!image && (
+              <Image
+                source={{ uri: form.image }}
+                className="w-[30vw] h-[30vw] ml-2 rounded-lg"
+              />
+            )}
           </View>
         </View>
         <View className="absolute bottom-6 w-full">
@@ -153,7 +126,7 @@ const CreateTable = () => {
               createTable(form);
             }}
           >
-            <Text className="text-white">Thêm bàn</Text>
+            <Text className="text-white">Chỉnh sửa</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -161,4 +134,4 @@ const CreateTable = () => {
   );
 };
 
-export default CreateTable;
+export default EditTable;

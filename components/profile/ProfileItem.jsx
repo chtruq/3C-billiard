@@ -11,8 +11,8 @@ const ProfileItem = ({ title, icon, goTo }) => {
       }}
       className="flex-row items-center justify-between p-2 py-4 border-b border-gray-400"
     >
-      <View className="flex-row">
-        <Image className="w-7 h-7" source={icon} />
+      <View className="flex-row items-center">
+        <Image className="w-6 h-6 mr-2" source={icon} />
         <Text className="font-pmedium text-xl">{title}</Text>
       </View>
 

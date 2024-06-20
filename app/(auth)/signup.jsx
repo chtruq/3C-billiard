@@ -71,12 +71,8 @@ const SignUp = () => {
     if (validate()) {
       try {
         await AsyncStorage.setItem("email", form.email);
-        const response = await register(
-          form.name,
-          form.email,
-          form.password,
-          form.phone
-        );
+        console.log("form", form);
+        const response = await register(form);
         console.log(response);
         router.push("/verify-email");
       } catch (error) {

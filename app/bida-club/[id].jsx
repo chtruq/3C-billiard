@@ -11,12 +11,14 @@ import { Entypo } from "@expo/vector-icons";
 import { getBidaClubsByID } from "../../lib/action/bidaclubs";
 const BilliardDetail = () => {
   const { id } = useLocalSearchParams("id");
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({});
+  const [image, setImage] = useState(null);
 
   const getBidaClubID = async () => {
     try {
       const response = await getBidaClubsByID(id);
       setData(response);
+      setImage(response.image);
     } catch (error) {
       console.log(error);
     }
@@ -25,13 +27,15 @@ const BilliardDetail = () => {
   useEffect(() => {
     getBidaClubID();
   }, []);
+  console.log(data);
+  // console.log(image);
 
   return (
     <View className="bg-white h-[100%]">
       <View className="w-[100vw] rounded-md items-center mt-2">
         <Image
-          source={require("../../assets/clb_image.png")}
-          className="w-[90%] rounded-md items-center"
+          source={{ uri: image }}
+          className="w-[90%] h-80 rounded-md items-center"
         />
       </View>
       <View>

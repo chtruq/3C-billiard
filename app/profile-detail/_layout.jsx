@@ -39,6 +39,30 @@ const ProfileLayout = () => {
           headerTitle: "Đặt bàn",
         }}
       />
+      <Stack.Screen
+        name="confirm"
+        options={{
+          headerShown: false,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Yêu cầu đặt bàn",
+        }}
+      />
+      <Stack.Screen
+        name="testscreen"
+        options={{
+          headerShown: false,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Test",
+        }}
+      />
+      <Stack.Screen
+        name="club-edit"
+        options={{
+          headerShown: false,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Chỉnh sửa thông tin câu lạc bộ",
+        }}
+      />
     </Stack>
   );
 };
