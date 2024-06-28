@@ -30,7 +30,9 @@ const Notification = () => {
     setIsLoading(true);
     try {
       const res = await getNotificationsByUserId(user.userid);
-      const sortedData = res.notificates.sort((a, b) => b.id - a.id);
+      const sortedData = res.notificates
+        .sort((a, b) => b.id - a.id)
+        .filter((item) => item.title !== "Bill Image Updated");
       setData({ notificates: sortedData });
     } catch (error) {
       console.log(error);
