@@ -30,7 +30,7 @@ export default function App() {
           <Text className="text-lg mt-2 font-pregular text-black">
             Connect-Cue-Community
           </Text>
-          <ActivityIndicator className="mt-4" size="large" />
+          {/* <ActivityIndicator className="mt-4" size="large" /> */}
         </View>
       </ImageBackground>
       <StatusBar style="auto" />
