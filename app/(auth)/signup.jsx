@@ -10,6 +10,7 @@ import {
   Keyboard,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,47 +18,55 @@ import TextField from "../../components/TextField";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { register } from "../../lib/action/users";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const userIcon = require("../../assets/user.png");
   const mailIcon = require("../../assets/mail.png");
   const phoneIcon = require("../../assets/smartphone.png");
   const passwordIcon = require("../../assets/lock.png");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [form, setForm] = useState({
-    name: "Chi Trung",
-    email: "trung@gmail.com",
-    phone: "0987654321",
-    password: "123@abcD",
+    // UserName: "",
+    // Email: "",
+    // Phone: "",
+    // Password: "",
+    UserName: "Chi Trung",
+    Email: "hctrung2109@gmail.com",
+    Phone: "0978214001",
+    Password: "123@abcD",
   });
+
+  const formData = new FormData();
 
   const validate = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^(\+)?(\d[- .]*){7,13}$/;
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (form.name === "") {
+    if (form.UserName === "") {
       alert("Vui lòng nhập họ và tên");
       return false;
     }
-    if (form.email === "") {
+    if (form.Email === "") {
       alert("Vui lòng nhập email");
       return false;
     }
-    if (form.phone === "") {
+    if (form.Phone === "") {
       alert("Vui lòng nhập số điện thoại");
       return false;
     }
-    if (form.password === "") {
+    if (form.Password === "") {
       alert("Vui lòng nhập mật khẩu");
       return false;
     }
 
-    if (!emailRegex.test(form.email)) {
+    if (!emailRegex.test(form.Email)) {
       alert("Email không hợp lệ");
       return false;
     }
-    if (!phoneRegex.test(form.phone)) {
+    if (!phoneRegex.test(form.Phone)) {
       alert("Số điện thoại không hợp lệ");
       return false;
     }
@@ -69,17 +78,38 @@ const SignUp = () => {
 
   const handleSubmit = async () => {
     if (validate()) {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("UserName", form.UserName);
+      formData.append("Email", form.Email);
+      formData.append("Phone", form.Phone);
+      formData.append("Password", form.Password);
+
       try {
-        await AsyncStorage.setItem("email", form.email);
-        console.log("form", form);
-        const response = await register(form);
-        console.log(response);
-        router.push("/verify-email");
+        await AsyncStorage.setItem("email", form.Email);
+        // const response = await register(formData);
+
+        // console.log(response);
+        Toast.show({
+          type: "success",
+          text1: "Đăng kí thành công",
+          text2: "Chuyển hướng đến trang đăng nhập",
+        });
+        router.back();
       } catch (error) {
         // saving error
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
+  };
+
+  const Loading = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   return (
@@ -88,7 +118,7 @@ const SignUp = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView className="mt-10">
+        <ScrollView className="bg-white">
           <View className="m-4">
             <View className="mt-10 items-center">
               <Image
@@ -108,36 +138,37 @@ const SignUp = () => {
                 placeholder="Your full name"
                 fieldName="Họ và tên"
                 handleChangeText={(e) => {
-                  setForm({ ...form, name: e });
+                  setForm({ ...form, UserName: e });
                 }}
-                value={form.name}
+                value={form.UserName}
                 icon={userIcon}
               />
               <TextField
                 placeholder="username@example.com"
                 fieldName="Email"
                 handleChangeText={(e) => {
-                  setForm({ ...form, email: e });
+                  setForm({ ...form, Email: e });
                 }}
-                value={form.email}
+                value={form.Email}
                 icon={mailIcon}
               />
               <TextField
                 placeholder="0978654321"
                 fieldName="Số điện thoại"
                 handleChangeText={(e) => {
-                  setForm({ ...form, phone: e });
+                  setForm({ ...form, Phone: e });
                 }}
-                value={form.phone}
+                value={form.Phone}
                 icon={phoneIcon}
               />
               <TextField
                 placeholder="************"
                 handleChangeText={(e) => {
-                  setForm({ ...form, password: e });
+                  setForm({ ...form, Password: e });
                 }}
                 fieldName="Mật khẩu"
-                value={form.password}
+                value={form.Password}
+                hidePassword={true}
                 // icon={passwordIcon}
               />
             </View>
@@ -147,7 +178,13 @@ const SignUp = () => {
               }}
               className="mt-4 bg-primary py-4 rounded-full flex-row justify-center items-center"
             >
-              <Text className="text-white font-pbold text-xl">Tiếp theo</Text>
+              <Text className="text-white font-pbold text-xl">Đăng kí</Text>
+              {isLoading ? (
+                <>
+                  <Text> </Text>
+                  <ActivityIndicator size="small" color="#fff" />
+                </>
+              ) : null}
             </TouchableOpacity>
             <View className="flex-row justify-center mt-4">
               <Text className="font-pmedium text-lg">Đã có tài khoản? </Text>

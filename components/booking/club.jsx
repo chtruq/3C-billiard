@@ -5,6 +5,10 @@ import { router } from "expo-router";
 
 const Club = ({ data, style }) => {
   const image = { uri: data.image };
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
 
   return (
     <TouchableOpacity
@@ -22,7 +26,9 @@ const Club = ({ data, style }) => {
       <View className="ml-2 w-[50vw]">
         <Text className="text-base font-psemibold pt-2">{data?.bidaName}</Text>
         <Text className="text-sm text-primary font-pbold pt-2">
-          {data.averagePrice ? data?.averagePrice + " đ" : "Liên hệ"}
+          {data.averagePrice > 0
+            ? formatter.format(data?.averagePrice)
+            : "Liên hệ"}
         </Text>
         <Text className="text-sm font-pregular text-gray-500 pt-2">
           {data?.address}

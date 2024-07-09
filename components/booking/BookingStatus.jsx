@@ -49,6 +49,22 @@ const BookingStatus = ({ data }) => {
     getSlot(slotId);
   }, []);
 
+  const formatTime = (time) => time.split(":").slice(0, 2).join(":");
+
+  const renderSlotTimes = (slots) => {
+    if (slots.length === 0) {
+      return "No slots available";
+    }
+
+    return slots
+      .map((slot) => {
+        const startTime = formatTime(slot.slotStartTime);
+        const endTime = formatTime(slot.slotEndTime);
+        return `${startTime} - ${endTime}`;
+      })
+      .join(", ");
+  };
+
   useEffect(() => {
     console.log("clubDetails", clubDetails);
   }, [clubDetails]);
@@ -64,21 +80,23 @@ const BookingStatus = ({ data }) => {
       <View className="flex-row w-[90vw]  ">
         <View className="">
           <Image
-            source={require("../../assets/avatar.png")}
+            source={require("../../assets/Blank-Avatar.png")}
             // source={data.avatar}
+            className="w-16 h-16 rounded-full"
           />
         </View>
         <View className="ml-4">
           <Text className="font-psemibold text-lg">
             {clubDetails?.bidaName}
           </Text>
-          <View className="flex-row mt-1 w-[90%]">
+          <View className="flex-row mt-1 w-[85%]">
             <FontAwesome6 name="location-dot" size={16} color="#e12727" />
             <Text className="ml-1 font-pmedium">{clubDetails?.address}</Text>
           </View>
 
           <Text className="font-pmedium mt-1 w-[90%]">
-            {slot.length >= 2 &&
+            {renderSlotTimes(slot)}
+            {/* {slot.length >= 2 &&
               slot
                 ?.map((item) =>
                   item.slotStartTime.split(":").slice(0, 2).join(":")
@@ -108,7 +126,7 @@ const BookingStatus = ({ data }) => {
                   item.slotEndTime.split(":").slice(0, 2).join(":")
                 )
                 ?.join(", ")
-                ?.replace(" - ")}
+                ?.replace(" - ")} */}
           </Text>
           <Text className="font-pmedium mt-1">
             {new Date(data.bookingDate).toLocaleDateString()}

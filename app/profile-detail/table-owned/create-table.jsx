@@ -117,6 +117,7 @@ const CreateTable = () => {
             title={"Giá tiền của bàn"}
             value={form.price}
             onChange={(text) => onChange("price", text)}
+            number={true}
           />
           <Text className="text-lg font-psemibold">Loại bàn bida </Text>
           <InputField

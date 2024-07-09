@@ -288,7 +288,7 @@ const BookingClb = () => {
     (total, slot) => total + Number(slot.table.price),
     0
   );
-  const roundedTotalFee = totalFee.toFixed(2);
+  const roundedTotalFee = formatter.format(totalFee);
 
   useEffect(() => {
     setTotalInVND(totalFee);
@@ -444,7 +444,7 @@ const BookingClb = () => {
                 <Text className="text-lg font-pregular">{tableName}</Text>
                 <Text className="text-lg font-pregular">
                   {/* {formatter.format(total)} */}
-                  {total.toFixed(2)}
+                  {formatter.format(total)}
                 </Text>
               </View>
             ))}

@@ -48,6 +48,15 @@ const AuthLayout = () => {
             headerBackTitle: "Quay lại",
           }}
         />
+
+        <Stack.Screen
+          name="change-password"
+          options={{
+            headerShown: true,
+            headerTitle: "Đổi mật khẩu",
+            headerBackTitle: "Quay lại",
+          }}
+        />
       </Stack>
       <Loader isLoading={loading} />
     </>

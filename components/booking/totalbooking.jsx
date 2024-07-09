@@ -8,12 +8,18 @@ const Totalbooking = ({ data }) => {
   // make the time with the slotItem, assuming 1 slotItem is equal to 1 hour
   // const totalHours = slotItem.length;
   // const totalTime = `${totalHours} giờ`;
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
 
   return (
     <View className="mx-4 mt-2">
       <View className="flex-row justify-between">
         <Text className="font-pregular text-lg">{data.tableName}</Text>
-        <Text className="font-pregular text-lg">{data.price}đ</Text>
+        <Text className="font-pregular text-lg">
+          {formatter.format(data.price)}
+        </Text>
       </View>
       <View className="flex-row items-center justify-between mt-2">
         <View className="flex-row w-[70%] flex-wrap">

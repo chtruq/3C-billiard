@@ -24,6 +24,7 @@ import { bookingBidaSlot } from "../../lib/action/booking";
 import Button from "../../components/Button";
 import * as MediaLibrary from "expo-media-library";
 import { captureRef } from "react-native-view-shot";
+import ClubCard from "../../components/booking/ClubCard";
 const BookingSuccess = () => {
   const [slotId, setSlotId] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState([]);
@@ -38,7 +39,8 @@ const BookingSuccess = () => {
     style: "currency",
     currency: "VND",
   });
-
+  const club = useGlobalSearchParams("club");
+  const clubId = club?.id;
   if (status === null) {
     requestPermission();
   }
@@ -158,7 +160,9 @@ const BookingSuccess = () => {
         </View>
         <View className="absolute bottom-0 bg-white h-[80vh] w-[100%] rounded-t-3xl border border-gray-200 shadow-lg">
           <View className="items-center">
-            <View className="w-[90%] flex-row mt-5 rounded-md border items-center bg-white">
+            <ClubCard id={clubId} />
+
+            {/* <View className="w-[90%] flex-row mt-5 rounded-md border items-center bg-white">
               <Image
                 source={require("../../assets/clubImage.png")}
                 className="w-[80px] h-[80px] m-2"
@@ -174,7 +178,7 @@ const BookingSuccess = () => {
                   <Text className="text-sm mx-2">5.0 (24)</Text>
                 </View>
               </View>
-            </View>
+            </View> */}
           </View>
 
           <View>
@@ -225,7 +229,7 @@ const BookingSuccess = () => {
             <Text className="mx-4 mt-2 font-pbold text-lg">
               {/* {totalInVND} */}
               {/* {totalPrice && formatter.format(totalPrice)} */}
-              {totalPrice} đ
+              {formatter.format(totalPrice)}
             </Text>
           </View>
           <View className=" flex-row justify-around mt-2">

@@ -63,6 +63,13 @@ const SignIn = () => {
     return true;
   };
 
+  const Loading = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
   const handleSubmit = async () => {
     if (validate()) {
       setIsLoading(true);
@@ -91,12 +98,12 @@ const SignIn = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        {isLoading && (
+        {/* {isLoading && (
           <View className="absolute top-0 left-0 w-full h-full bg-transparent bg-opacity-20 flex-row justify-center items-center z-50">
             <ActivityIndicator size="large" color="primary" />
           </View>
-        )}
-        <ScrollView>
+        )} */}
+        <ScrollView className=" bg-white">
           <View className="m-4">
             <View className="items-center mt-10">
               <Image
@@ -127,6 +134,8 @@ const SignIn = () => {
                   setForm({ ...form, password: e });
                 }}
                 value={form.password}
+                hidePassword={true}
+
                 // icon={passwordIcon}
               />
             </View>
@@ -141,7 +150,9 @@ const SignIn = () => {
                 title={"Đăng nhập"}
                 onSubmit={() => {
                   handleSubmit();
+                  // Loading();
                 }}
+                isLoading={isLoading}
               />
               <TouchableOpacity
                 onPress={() => {

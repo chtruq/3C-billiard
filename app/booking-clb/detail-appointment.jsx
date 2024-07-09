@@ -26,6 +26,7 @@ import {
   bookingBidaSlot,
 } from "../../lib/action/booking";
 import Button from "../../components/Button";
+import ClubCard from "../../components/booking/ClubCard";
 const DetailAppoinment = () => {
   const [slotId, setSlotId] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState([]);
@@ -39,6 +40,9 @@ const DetailAppoinment = () => {
     style: "currency",
     currency: "VND",
   });
+
+  const club = useGlobalSearchParams("clubId");
+  const clubId = club.id;
 
   const getTimeIdsAndSelectedSlots = async () => {
     try {
@@ -221,12 +225,14 @@ const DetailAppoinment = () => {
       >
         <View>
           <View className="w-[100%] items-center justify-center">
-            <View className="w-[90%] flex-row mt-16 rounded-md border bg-white">
+            {/* <View className="w-[90%] flex-row mt-16 rounded-md border bg-white">
               <Image
                 source={require("../../assets/clubImage.png")}
                 className="w-[80px] h-[80px] m-2"
-              />
-              <View>
+              /> */}
+            <ClubCard id={clubId} />
+
+            {/* <View>
                 <Text className="font-pbold text-lg">CLB Bida Đỗ Vương</Text>
                 <View className="flex-row my-2 items-center">
                   <FontAwesome6 name="location-dot" size={20} color="#E12727" />
@@ -236,8 +242,8 @@ const DetailAppoinment = () => {
                   <AntDesign name="star" size={20} color="#E12727" />
                   <Text className="text-sm mx-2">5.0 (24)</Text>
                 </View>
-              </View>
-            </View>
+              </View> */}
+            {/* </View> */}
           </View>
         </View>
         <View className="absolute bottom-4 bg-white h-[70vh] w-[100%] rounded-t-3xl border border-gray-200 shadow-lg">
@@ -289,7 +295,7 @@ const DetailAppoinment = () => {
             <Text className="mx-4 mt-2 font-pbold text-lg">
               {/* {totalInVND} */}
               {/* {totalPrice && formatter.format(totalPrice)} */}
-              {totalPrice} đ
+              {formatter.format(totalPrice)}
             </Text>
           </View>
           <View className="w-[95vw] items-center absolute bottom-24 mx-2 ">
@@ -307,7 +313,7 @@ const DetailAppoinment = () => {
                 handleBooking();
                 // checkLoading();
               }}
-              className="flex-row py-4 bg-primary rounded-3xl border-2 w-full"
+              className="flex-row py-4 bg-primary rounded-3xl border border-primary w-full"
             >
               <View className="flex-row justify-center w-full">
                 <Text className=" text-white font-psemibold text-base ">

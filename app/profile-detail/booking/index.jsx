@@ -1,4 +1,10 @@
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import TabsBooking from "../../../components/booking/TabsBooking";
 import { router } from "expo-router";
@@ -128,7 +134,7 @@ const Booking = () => {
         />
         <ScrollView className="h-[80vh]">
           {isLoading && (
-            <View className="justify-center items-center">
+            <View className="h-[80vh] justify-center items-center">
               <ActivityIndicator size="large" color="#e12727" />
             </View>
           )}
@@ -140,6 +146,27 @@ const Booking = () => {
                 <Text className="text-center mt-4 font-pmedium">
                   Bạn chưa đặt sân nào
                 </Text>
+              </View>
+            )}
+
+          {!isLoading &&
+            active &&
+            activeBookingData
+              ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              ?.filter((data) => data.status === "WAITING")?.length === 0 && (
+              <View className="h-[80vh] justify-center items-center">
+                <Text className="text-center mt-4 font-pmedium">
+                  Bạn chưa đặt bàn nào
+                </Text>
+                <TouchableOpacity
+                  className="text-center justify-center items-center m-0"
+                  onPress={() => router.replace("/booking")}
+                >
+                  <Text className="text-primary text-xl font-psemibold text-center">
+                    {" "}
+                    Đặt ngay
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
 
