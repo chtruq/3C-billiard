@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useState } from "react";
-import districts from "../../lib/dist/quan_huyen.json";
+import districts from "../../lib/address/quan_huyen.json";
 import { Picker } from "@react-native-picker/picker";
 
 const DistrictPicker = ({

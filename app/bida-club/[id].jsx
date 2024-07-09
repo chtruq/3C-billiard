@@ -10,6 +10,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { getBidaClubsByID } from "../../lib/action/bidaclubs";
 import Button from "../../components/Button";
+import moment from "moment";
 const BilliardDetail = () => {
   const { id } = useLocalSearchParams("id");
   const [data, setData] = useState({});
@@ -67,7 +68,8 @@ const BilliardDetail = () => {
           <View className="flex-row items-center pt-1">
             <AntDesign name="clockcircleo" size={16} color="rgb(225 39 39)" />
             <Text className="ml-2 text-gray-500 text-sm font-pregular">
-              Open: {data?.openingHours}
+              Mở cửa từ: {moment(data?.openTime, "HH:mm:ss").format("HH:mm")} -{" "}
+              {moment(data?.closeTime, "HH:mm:ss").format("HH:mm")}
             </Text>
           </View>
           <View className="flex-row items-center pt-1">

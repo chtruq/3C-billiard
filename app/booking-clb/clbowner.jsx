@@ -23,6 +23,7 @@ import { isLoading } from "expo-font";
 import {
   bookingBidaSlot,
   clubOwnerBookingBidaSlot,
+  deleteBooking,
 } from "../../lib/action/booking";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -375,6 +376,22 @@ const CLBOwner = () => {
     // }
   };
 
+  // const hanldeDelete = async (timeIds) => {
+  //   const timeIds = selectedSlots.map((slot) => slot.time.id);
+  //   await AsyncStorage.removeItem("@timeIds");
+  //   await AsyncStorage.removeItem("@selectedSlots");
+  //   await AsyncStorage.removeItem("@selectedDate");
+
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await deleteBooking(timeIds);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     router.back();
+  //   }
+  // }
+
   return (
     <ScrollView className=" bg-white">
       {isLoading && (
@@ -486,14 +503,6 @@ const CLBOwner = () => {
         </View> */}
         </View>
         <View>
-          {/* <View>
-          <View className="w-[100%] border my-6 border-gray-400"></View>
-          <View className="flex-row justify-between mx-4 mb-32">
-            <Text className="text-xl font-pbold">Tổng phí</Text>
-            <Text className="text-xl font-pbold">{roundedTotalFee}</Text>
-          </View>
-        </View> */}
-
           {totalFee ? (
             <View className="w-[95vw] items-center fixed bottom-0 mx-2 mb-6">
               <Button

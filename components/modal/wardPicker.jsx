@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useState } from "react";
-import wards from "../../lib/dist/xa_phuong.json";
+import wards from "../../lib/address/xa_phuong.json";
 const wardPicker = ({
   districtSearch,
   setDistrictSearch,

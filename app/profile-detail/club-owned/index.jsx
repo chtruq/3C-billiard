@@ -65,6 +65,7 @@ const ClubOwned = () => {
   //     status: "reject",
   //   },
   // ];
+  console.log(bidaClub);
 
   return (
     <ScrollView

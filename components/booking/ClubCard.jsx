@@ -5,21 +5,22 @@ import { getBidaClubsByID } from "../../lib/action/bidaclubs";
 
 const ClubCard = ({ id }) => {
   const [data, setData] = useState({});
+
   const [image, setImage] = useState(null);
 
   const getBidaClubID = async () => {
     try {
       const response = await getBidaClubsByID(id);
       setData(response);
-      setImage(response.image);
+      setImage(response?.image);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getBidaClubID();
-  }, []);
+    getBidaClubID(id);
+  }, [id]);
 
   return (
     <View className="w-[90%] flex-row mt-16 rounded-md border bg-white">

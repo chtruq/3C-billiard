@@ -8,9 +8,18 @@ const BookingLayout = () => {
       <Stack.Screen
         name="index"
         options={{
-          headerShown: false,
+          headerShown: true,
           headerBackButtonMenuEnabled: true,
           headerTitle: "Đặt bàn",
+        }}
+      />
+      <Stack.Screen
+        name="bill-detail"
+        options={{
+          headerShown: true,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Chi tiết hóa đơn",
+          headerBackTitle: "Quay lại",
         }}
       />
     </Stack>

@@ -30,9 +30,21 @@ const LocationPickeker = ({
   const [timer, setTimer] = useState(null);
 
   const handleAddProvince = (value) => {
-    console.log("value", value);
-    const [provinceId, provinceName] = value.split(",");
+    let provinceId, provinceName;
 
+    if (Array.isArray(value)) {
+      [provinceId, provinceName] = value;
+    } else if (typeof value === "string") {
+      [provinceId, provinceName] = value.split(",");
+    } else {
+      console.error(
+        "handleAddProvince was called with an unsupported type:",
+        value
+      );
+      return; // Exit the function if value is neither a string nor an array
+    }
+
+    console.log("provinceName", provinceName);
     setProvince(provinceName);
     setProvinceCode(provinceId);
     if (timer) {
