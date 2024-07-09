@@ -27,10 +27,10 @@ const UserInfo = () => {
   // }, [paymentMethod]);
 
   const [form, setForm] = useState({
-    name: "trung",
-    phone: "0987654321",
-    email: "trunghc@gmail.com",
-    paymentMethod: "momo",
+    name: "",
+    phone: "",
+    email: "",
+    paymentMethod: "",
     note: "",
   });
 

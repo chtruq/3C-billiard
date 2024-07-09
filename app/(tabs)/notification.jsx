@@ -78,12 +78,27 @@ const Notification = () => {
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         {/* <View className="h-[100vh] bg-white"> */}
+
         <ScrollView
           className="bg-white h-[100vh]"
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
         >
+          {isLoading && !isRefreshing && (
+            <View className="h-[90vh] justify-center items-center">
+              <ActivityIndicator size="large" color="primary" />
+            </View>
+          )}
+
+          {data.notificates.length === 0 && (
+            <View className="h-[90vh] justify-center items-center">
+              <Text className=" font-psemibold text-xl text-center">
+                Bạn chưa có thông báo nào
+              </Text>
+            </View>
+          )}
+
           {data.notificates.map((item, index) => (
             <NotiCard key={index} data={item} />
           ))}

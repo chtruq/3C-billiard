@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { Link, router } from "expo-router";
@@ -33,8 +34,8 @@ const SignIn = () => {
   // });
 
   const [form, setForm] = useState({
-    mail: "exe201@gmail.com",
-    password: "hung123",
+    mail: "",
+    password: "",
   });
 
   const validate = () => {
@@ -82,10 +83,11 @@ const SignIn = () => {
           setIsLogged(true);
           router.replace("/home");
         } else {
-          alert("Đăng nhập thất bại");
+          Alert.alert("Đăng nhập thất bại");
         }
       } catch (error) {
         console.log(error);
+        Alert.alert("Sai thông tin tài khoản hoặc mật khẩu");
       } finally {
         setIsLoading(false);
       }

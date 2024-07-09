@@ -157,7 +157,8 @@ const DetailAppoinment = () => {
           user.userid,
           slotId,
           formattedDate,
-          userForm
+          userForm,
+          0
         );
         console.log("response.id", response.id);
         setBillId(response.id);
@@ -186,7 +187,8 @@ const DetailAppoinment = () => {
           user.userid,
           slotId,
           formattedDate,
-          userForm
+          userForm,
+          1
         );
         console.log("response", response);
         router.replace("/booking-clb/success");

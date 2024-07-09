@@ -60,7 +60,7 @@ const Booking = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await getAllBidaClubs(district, search);
+      const res = await getAllBidaClubs(province ? province : district, search);
       console.log("res", res);
       setData(res);
     } catch (error) {
@@ -77,7 +77,7 @@ const Booking = () => {
 
   useEffect(() => {
     fetchData();
-  }, [district, search]);
+  }, [province, district, search]);
 
   const handleAddAddress = async (province, district) => {
     console.log("province, district", province, district);

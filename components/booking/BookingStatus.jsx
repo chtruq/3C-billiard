@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { getBidaClubsByID } from "../../lib/action/bidaclubs";
 import { getSlotBySlotId } from "../../lib/action/bidaTableSlot";
+import { router } from "expo-router";
 const BookingStatus = ({ data }) => {
   const clubId = data.clubId;
   console.log(clubId);
@@ -76,7 +77,15 @@ const BookingStatus = ({ data }) => {
   };
 
   return (
-    <TouchableOpacity className="w-[95vw] items-center my-2 p-2 shadow-2xl rounded-lg bg-white mx-auto ">
+    <TouchableOpacity
+      onPress={() => {
+        router.push({
+          pathname: "/profile-detail/booking/bill-detail",
+          params: { orderCode: data?.orderCode },
+        });
+      }}
+      className="w-[95vw] items-center my-2 p-2 shadow-2xl rounded-lg bg-white mx-auto "
+    >
       <View className="flex-row w-[90vw]  ">
         <View className="">
           <Image

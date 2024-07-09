@@ -32,10 +32,10 @@ const SignUp = () => {
     // Email: "",
     // Phone: "",
     // Password: "",
-    UserName: "Chi Trung",
-    Email: "hctrung2109@gmail.com",
-    Phone: "0978214001",
-    Password: "123@abcD",
+    UserName: "",
+    Email: "",
+    Phone: "",
+    Password: "",
   });
 
   const formData = new FormData();
