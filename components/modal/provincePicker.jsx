@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useState } from "react";
-import provinces from "../../lib/dist/tinh_tp.json";
+import provinces from "../../lib/address/tinh_tp.json";
 import { Picker } from "@react-native-picker/picker";
 
 const ProVincePicker = ({ provinceSearch, setProvinceSearch, addProvince }) => {
