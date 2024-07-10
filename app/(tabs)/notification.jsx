@@ -49,7 +49,7 @@ const Notification = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  // console.log("data: ", data);
+  console.log("data: ", data);
 
   const { user } = useGlobalContext();
   // console.log("user: ", user);

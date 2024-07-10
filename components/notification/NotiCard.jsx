@@ -26,29 +26,30 @@ const NotiCard = ({ data }) => {
     "đã xác nhận yêu cầu đặt bàn của bạn",
     "đã từ chối yêu cầu đặt bàn của bạn",
   ];
-  
+
   return (
     <TouchableOpacity
       className="flex-row w-[100vw] mx-4 py-2"
-      onPress={() =>
-        router.navigate({
-          pathname: "/profile-detail/booking",
-          params: { id: data?.id },
-        })
-      }
+      onPress={() => {
+        if (data.title === "Thông báo đặt bàn mới") {
+          router.navigate({
+            pathname: "/profile-detail/club-owned",
+            params: { id: data?.id },
+          });
+          return;
+        } else {
+          router.push({
+            pathname: "/profile-detail/booking/bill-detail",
+            params: { orderCode: data?.billOrderCode },
+          });
+        }
+      }}
     >
       <View className="">
         <Image
           className="w-16 h-16 rounded-full"
           source={require("../../assets/3C-Icon.png")}
         />
-        {/* <Image
-          className="w-5 h-5 absolute top-12 right-0"
-          {data.descrpition === "Thông báo đặt bàn thành công"}
-        {data.descrpition === "Thông báo đặt bàn mới"}
-        {data.descrpition === "Thông báo đặt bàn thành công"}
-          source={require("../../assets/success.png")}
-        /> */}
 
         <Image
           className="w-5 h-5 absolute top-12 right-0"
