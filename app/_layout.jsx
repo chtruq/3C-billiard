@@ -42,7 +42,7 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <Stack>
+      <Stack initialRouteName="index">
         <Stack.Screen
           name="index"
           options={{
