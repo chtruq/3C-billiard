@@ -227,19 +227,21 @@ const ClubEdit = () => {
               />
 
               <InputField
-                value={province}
+                value={form.address}
                 onChange={(value) => {
                   setProvince(value);
                 }}
                 title={"Tỉnh/Thành phố"}
+                disable={true}
               />
 
-              <InputField
+              {/* <InputField
                 value={district}
                 onChange={(value) => {
                   setDistrict(value);
                 }}
                 title={"Quận / Huyện / Thị xã / Thành phố"}
+                disable={true}
               />
               <InputField
                 value={ward}
@@ -247,7 +249,8 @@ const ClubEdit = () => {
                   setWard(value);
                 }}
                 title={"Địa chỉ cụ thể"}
-              />
+                disable={true}
+              /> */}
             </View>
             <View className="mt-2">
               <Text className="font-psemibold text-base">Thời gian</Text>

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -89,10 +90,10 @@ const MomoPayment = () => {
       };
 
       const response = await updateBillImage(id, image, config);
-      console.log("response", response);
-      router.push("/booking-clb/success");
+      router.replace("/booking-clb/success");
     } catch (error) {
       console.log("error", error);
+      Alert.alert("Có lỗi xảy ra, vui lòng thử lại sau");
     } finally {
       console.log("finally");
       setIsLoading(false);
@@ -105,6 +106,11 @@ const MomoPayment = () => {
   //     setIsLoading(false);
   //   }, 1000);
   // };
+
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
 
   return (
     <ScrollView className=" bg-white">
@@ -130,7 +136,9 @@ const MomoPayment = () => {
           <View className="mt-2">
             <Text className="font-pmedium text-base">
               Số tiền chuyển:{" "}
-              <Text className="text-xl font-pbold">{totalPrice}</Text>
+              <Text className="text-xl font-pbold">
+                {formatter.format(totalPrice)}
+              </Text>
             </Text>
           </View>
           <View className="mt-2">
@@ -173,7 +181,7 @@ const MomoPayment = () => {
         {image && (
           <View className="absolute bottom-4 w-full items-center">
             <TouchableOpacity
-              className="py-4 bg-primary rounded-3xl border-2 w-[95%] mx-2 items-center"
+              className="py-4 bg-primary rounded-3xl border border-primary w-[95%] mx-2 items-center"
               onPress={() => {
                 handleUpdateImage(billId, image);
                 // checkLoading();

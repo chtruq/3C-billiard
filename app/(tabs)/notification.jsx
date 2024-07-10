@@ -49,52 +49,61 @@ const Notification = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log("data: ", data);
+  // console.log("data: ", data);
 
   const { user } = useGlobalContext();
-  console.log("user: ", user);
+  // console.log("user: ", user);
 
-  // const datas = [
-  //   {
-  //     avatar: require("../../assets/avatar.png"),
-  //     name: "Nguyễn Văn A",
-  //     type: "booking",
-  //     status: "accept",
-  //     time: "10/06/2024",
-  //   },
-  //   {
-  //     avatar: require("../../assets/avatar.png"),
-  //     name: "Nguyễn Văn A",
-  //     type: "booking",
-  //     status: "reject",
-  //   },
-  //   {
-  //     avatar: require("../../assets/avatar.png"),
-  //     name: "Nguyễn Văn A",
-  //     type: "booking",
-  //     status: "send",
-  //     time: "10/06/2024",
-  //   },
-  // ];
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
+      {isLoading && !isRefreshing && (
+        <View className="h-[100vh] items-center justify-center">
+          <ActivityIndicator size="large" color="#e12727" />
+        </View>
+      )}
+      {!isLoading && data.length === 0 && (
+        <View className="h-[70vh] items-center justify-center">
+          <Text className="font-pmedium text-gray-500">
+            Hiện tại vị trí bạn chưa có thông báo nào
+          </Text>
+          <Text className="font-pmedium text-gray-500">
+            Hãy hãy trải nghiệm ứng dụng thôi!!
+          </Text>
+        </View>
+      )}
+
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         {/* <View className="h-[100vh] bg-white"> */}
+
         <ScrollView
           className="bg-white h-[100vh]"
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
         >
+          {isLoading && !isRefreshing && (
+            <View className="h-[90vh] justify-center items-center">
+              <ActivityIndicator size="large" color="primary" />
+            </View>
+          )}
+
+          {data.notificates.length === 0 && (
+            <View className="h-[90vh] justify-center items-center">
+              <Text className=" font-psemibold text-xl text-center">
+                Bạn chưa có thông báo nào
+              </Text>
+            </View>
+          )}
+
           {data.notificates.map((item, index) => (
             <NotiCard key={index} data={item} />
           ))}
         </ScrollView>
-        {/* <FlatList className="bg-white h-[90vh]"
+        {/* <FlatList className="bg-white h-[100vh]"
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <Notifi data={item} />}

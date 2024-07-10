@@ -5,6 +5,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { deleteTableBida } from "../../lib/action/bidaTable";
 import { router } from "expo-router";
 const CardTable = ({ data, deleteTable, bidaClubId }) => {
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
   return (
     <View className="w-full">
       <View className="flex-row  mx-5 my-2 rounded-lg border p-2">
@@ -22,7 +26,9 @@ const CardTable = ({ data, deleteTable, bidaClubId }) => {
             <Text className="text-base font-pregular">Loại: {data?.note}</Text>
           </View>
           <View className="mt-1">
-            <Text className="text-sm font-pmedium">Giá: {data?.price}đ</Text>
+            <Text className="text-sm font-pmedium">
+              Giá: {formatter.format(data?.price)}
+            </Text>
           </View>
           <View className="flex-row justify-between items-center">
             <TouchableOpacity

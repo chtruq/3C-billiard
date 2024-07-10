@@ -1,8 +1,31 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { getWaitingBills } from "../../lib/action/bill";
+import { Entypo } from "@expo/vector-icons";
 const CardCLB = ({ data }) => {
+  const [waitingStatus, setWaitingStatus] = useState([]);
+  const getWatingStatus = async () => {
+    try {
+      const response = await getWaitingBills(data?.id);
+      console.log(response);
+      if (response.length > 0) {
+        setWaitingStatus(response.length);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getWatingStatus();
+  }, []);
+
+  if (waitingStatus.length > 0) {
+    console.log(waitingStatus);
+  }
+
   return (
     <View
       className={`h-[20vh] my-2 border rounded-md ${
@@ -27,9 +50,18 @@ const CardCLB = ({ data }) => {
                   params: { clubId: data?.id },
                 });
               }}
-              className="mt-2 mr-2"
+              className="mt-2 mr-2 flex-row"
             >
-              <Text className="font-pmedium">Các yêu cầu</Text>
+              <Text className="font-pmedium">
+                {waitingStatus > 0 ? "Yêu cầu mới" : "Các yêu cầu"}{" "}
+              </Text>
+              {waitingStatus > 0 && (
+                <View className="bg-primary w-4 h-4 rounded-full ml-1">
+                  <Text className="text-white text-xs text-center">
+                    {waitingStatus}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           )}
         </View>

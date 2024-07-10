@@ -27,7 +27,12 @@ const Profile = () => {
       <View className="m-2">
         <View className="flex-row items-center">
           <View>
-            <Image source={require("../../assets/avatar.png")} />
+            <Image
+              className="w-20 h-20 rounded-full"
+              source={require("../../assets/Blank-Avatar.png")}
+              resizeMode="contain"
+              resizeMethod="resize"
+            />
           </View>
           <View>
             <View className="ml-4 w-[65vw]">
@@ -76,11 +81,11 @@ const Profile = () => {
             icon={clubregister}
           />
 
-          <ProfileItem
+          {/* <ProfileItem
             goTo={"/"}
             title={"Thay đổi mật khẩu"}
             icon={changepass}
-          />
+          /> */}
         </View>
         <TouchableOpacity
           onPress={() => {

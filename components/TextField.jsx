@@ -18,6 +18,7 @@ const TextField = ({
   inputStyle,
   value,
   handleChangeText,
+  hidePassword,
   ...props
 }) => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -31,10 +32,10 @@ const TextField = ({
           onChangeText={handleChangeText}
           value={value}
           className="text-lg pt-3 w-[90%] mb-1"
-          secureTextEntry={fieldName === "Mật khẩu" && !showPassword}
+          secureTextEntry={hidePassword && !showPassword}
           {...props}
         />
-        {fieldName === "Mật khẩu" && (
+        {hidePassword && (
           <TouchableOpacity
             className="ml-1 items-center justify-center w-10 h-10"
             onPress={() => setShowPassword(!showPassword)}

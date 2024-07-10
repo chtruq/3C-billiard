@@ -34,8 +34,8 @@ const ProfileLayout = () => {
       <Stack.Screen
         name="booking"
         options={{
-          headerShown: true,
-          headerBackButtonMenuEnabled: true,
+          headerShown: false,
+          headerBackButtonMenuEnabled: false,
           headerTitle: "Đặt bàn",
         }}
       />

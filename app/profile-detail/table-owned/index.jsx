@@ -20,6 +20,7 @@ const TableOwned = ({}) => {
   const [tableData, setTableData] = useState([]);
   const Club = useLocalSearchParams("clubId");
   const [isLoading, setIsLoading] = useState(false);
+
   const clubId = Club.clubId;
 
   const getBidaTableByClubId = async (id) => {

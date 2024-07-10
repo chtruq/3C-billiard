@@ -1,12 +1,32 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Image,
+  Modal,
+  Button,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { acceptBill, rejectBill } from "../../lib/action/bill";
-import { getBidaTableSlotByTableId } from "../../lib/action/bidaTableSlot";
+import {
+  getBidaTableSlotByTableId,
+  getSlotBySlotId,
+} from "../../lib/action/bidaTableSlot";
 import { router } from "expo-router";
 
 const Confirmation = ({ data, reloadData }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [slot, setSlot] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
   const handleAccept = async () => {
     try {
       setIsLoading(true);
@@ -50,39 +70,116 @@ const Confirmation = ({ data, reloadData }) => {
     }, []);
   }
 
+  const getSlot = async (slotId) => {
+    try {
+      if (Array.isArray(slotId)) {
+        // Fetch all slots concurrently
+        const responses = await Promise.all(
+          slotId.map((id) => getSlotBySlotId(id))
+        );
+        setSlot(responses); // Assuming setSlot can handle an array of slots
+        return responses;
+      } else {
+        // Original logic for a single slotId
+        const response = await getSlotBySlotId(slotId);
+        setSlot(response);
+        return response;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSlot(data.bookedSlotIds);
+  }, []);
+
+  const formatTime = (time) => time.split(":").slice(0, 2).join(":");
+
+  const renderSlotTimes = (slots) => {
+    if (slots.length === 0) {
+      return "No slots available";
+    }
+
+    return slots
+      .map((slot) => {
+        const startTime = formatTime(slot.slotStartTime);
+        const endTime = formatTime(slot.slotEndTime);
+        return `${startTime} - ${endTime}`;
+      })
+      .join(", ");
+  };
+
   return (
-    <View className="p-2 rounded-lg border my-1 h-[20vh]">
-      <View>
-        <Text className="font-pmedium text-lg">{data.bookerName}</Text>
-      </View>
-      <Text className="font-pmedium">
-        Ngày đặt: {new Date(data.bookingDate).toLocaleDateString("en-GB")}
-      </Text>
-      <Text className="font-pmedium">
-        Thời gian: {data.bookedSlotIds.map((item) => item).join(",")}
-      </Text>
-      <Text className="font-pmedium">
-        Phương thức thanh toán:{" "}
-        {data.paymentMethods === 0 ? "Momo" : "Tiền mặt"}{" "}
-      </Text>
-      <View className="flex-row justify-around mt-2">
+    <View className="rounded-lg border my-1 h-[20vh]">
+      <View className="flex-row  p-2">
+        <View className="w-3/4">
+          <View>
+            <Text className="font-pmedium text-lg">{data.bookerName}</Text>
+          </View>
+          <Text className="font-pmedium">
+            Ngày đặt: {new Date(data.bookingDate).toLocaleDateString("en-GB")}
+          </Text>
+          <Text className="font-pmedium">
+            Thời gian:
+            {renderSlotTimes(slot)}
+          </Text>
+          <Text className="font-pmedium">
+            Phương thức thanh toán:{" "}
+            {data.paymentMethods === 0 ? "Momo" : "Tiền mặt"}{" "}
+          </Text>
+        </View>
         <TouchableOpacity
           onPress={() => {
-            handleAccept();
+            openModal();
           }}
-          className="bg-green-500 p-4 rounded-lg"
+          className=" items-end w-1/4"
         >
-          <Text className=" text-white ">Đồng ý</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            handleReject();
-          }}
-          className="bg-primary p-4 rounded-lg"
-        >
-          <Text className="text-white">Từ chối</Text>
+          <Image
+            source={{ uri: data?.image }}
+            className="w-[50%] h-20"
+            resizeMode="cover"
+          />
         </TouchableOpacity>
       </View>
+      <View className="absolute bottom-0 w-[100%]">
+        <View className="flex-row justify-end gap-3 mt-2 mx-2 mb-2">
+          <TouchableOpacity
+            onPress={() => {
+              handleAccept();
+            }}
+            className="bg-green-500 p-4 rounded-lg"
+          >
+            <Text className=" text-white">Đồng ý</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handleReject();
+            }}
+            className="bg-primary p-4 rounded-lg"
+          >
+            <Text className="text-white">Từ chối</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 justify-center items-center bg-black bg-opacity-75">
+          <Image
+            source={{ uri: data?.image }}
+            className="w-full h-full"
+            resizeMode="contain"
+          />
+          <View className="absolute top-10 right-5">
+            <Button title="Đóng" onPress={closeModal} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

@@ -42,7 +42,6 @@ const EditTable = () => {
 
   useEffect(() => {
     setForm({ ...form, image: image });
-    console.log("image", image);
   }, [image]);
 
   const getBidaTable = async (id) => {
@@ -63,8 +62,6 @@ const EditTable = () => {
     getBidaTable(tableId);
   }, []);
 
-  console.log("form", form.price);
-
   return (
     <ScrollView>
       <View className="h-[90vh] bg-white">
@@ -82,8 +79,9 @@ const EditTable = () => {
           />
           <InputField
             title={"Giá tiền của bàn"}
-            value={form.price}
+            value={form.price && form.price.toString()}
             onChange={(text) => onChange("price", text)}
+            number={true}
           />
           <Text className="text-lg font-psemibold">Loại bàn bida </Text>
           <InputField

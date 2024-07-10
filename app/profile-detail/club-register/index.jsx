@@ -22,23 +22,23 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
 import { createBidaClub } from "../../../lib/action/bidaclubs";
 const ClubOwned = () => {
   const [image, setImage] = useState(null);
-  const [province, setProvince] = useState("Bình Dương");
-  const [district, setDistrict] = useState("Dĩ An");
-  const [ward, setWard] = useState("40 Tân Lập, Đông Hoà");
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [ward, setWard] = useState("");
+  const [detailAddress, setDetailAddress] = useState("");
   const { user } = useGlobalContext();
   const userId = user.userid;
   const [form, setForm] = useState({
     userId: userId,
-    bidaName: "Bida Hoàng Anh",
+    bidaName: "",
     image: "",
-    address: province + ", " + district + ", " + ward,
-    email: "hctrung2109@gmail.com",
-    description:
-      "Bida Hoàng Anh là một trong những câu lạc bộ bida hàng đầu tại Bình Dương. Với không gian rộng rãi, thoáng đãng, chúng tôi cam kết mang đến cho bạn những trải nghiệm tuyệt vời nhất khi đến với chúng tôi.",
-    phone: "0978654123",
-    openTime: "8:00",
-    closeTime: "23:00",
-    googleMapLink: "https://maps.app.goo.gl/k6SMUyQUFeWatZEy8",
+    address: detailAddress + ", " + ward + ", " + district + ", " + province,
+    email: "",
+    description: "",
+    phone: "",
+    openTime: "",
+    closeTime: "",
+    googleMapLink: "",
   });
 
   const pickerRef = useRef();
@@ -75,15 +75,10 @@ const ClubOwned = () => {
     setDate(currentDate);
   };
 
-  // const showDatepicker = () => {
-  //   showMode("date");
-  // };
-
-  // console.log(provincedata);
   const validate = () => {
     if (
       form.bidaName === "" ||
-      form.address === "" ||
+      form.address === ", , , " ||
       form.description === "" ||
       form.image === "" ||
       form.openTime === "" ||
@@ -122,6 +117,13 @@ const ClubOwned = () => {
       Alert.alert(
         "Thời gian đóng cửa không hợp lệ. 23:00 là thời gian hợp lệ."
       );
+      return false;
+    }
+
+    if (
+      !/https:\/\/www.google.com\/maps\/embed\?pb=/.test(form.googleMapLink)
+    ) {
+      Alert.alert("Link Google Map không hợp lệ");
       return false;
     }
 
@@ -167,8 +169,6 @@ const ClubOwned = () => {
     }
   };
 
-  console.log(form);
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
@@ -206,6 +206,13 @@ const ClubOwned = () => {
               />
               <InputField
                 value={ward}
+                onChange={(value) => {
+                  setWard(value);
+                }}
+                title={"Phường/Xã/Thị trấn"}
+              />
+              <InputField
+                value={detailAddress}
                 onChange={(value) => {
                   setWard(value);
                 }}

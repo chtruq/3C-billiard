@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { Link, router } from "expo-router";
@@ -33,8 +34,8 @@ const SignIn = () => {
   // });
 
   const [form, setForm] = useState({
-    mail: "exe201@gmail.com",
-    password: "hung123",
+    mail: "",
+    password: "",
   });
 
   const validate = () => {
@@ -63,6 +64,13 @@ const SignIn = () => {
     return true;
   };
 
+  const Loading = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
   const handleSubmit = async () => {
     if (validate()) {
       setIsLoading(true);
@@ -75,10 +83,11 @@ const SignIn = () => {
           setIsLogged(true);
           router.replace("/home");
         } else {
-          alert("Đăng nhập thất bại");
+          Alert.alert("Đăng nhập thất bại");
         }
       } catch (error) {
         console.log(error);
+        Alert.alert("Sai thông tin tài khoản hoặc mật khẩu");
       } finally {
         setIsLoading(false);
       }
@@ -91,12 +100,12 @@ const SignIn = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        {isLoading && (
+        {/* {isLoading && (
           <View className="absolute top-0 left-0 w-full h-full bg-transparent bg-opacity-20 flex-row justify-center items-center z-50">
             <ActivityIndicator size="large" color="primary" />
           </View>
-        )}
-        <ScrollView>
+        )} */}
+        <ScrollView className=" bg-white">
           <View className="m-4">
             <View className="items-center mt-10">
               <Image
@@ -127,6 +136,8 @@ const SignIn = () => {
                   setForm({ ...form, password: e });
                 }}
                 value={form.password}
+                hidePassword={true}
+
                 // icon={passwordIcon}
               />
             </View>
@@ -141,7 +152,9 @@ const SignIn = () => {
                 title={"Đăng nhập"}
                 onSubmit={() => {
                   handleSubmit();
+                  // Loading();
                 }}
+                isLoading={isLoading}
               />
               <TouchableOpacity
                 onPress={() => {

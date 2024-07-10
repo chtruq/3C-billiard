@@ -9,6 +9,8 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { getBidaClubsByID } from "../../lib/action/bidaclubs";
+import Button from "../../components/Button";
+import moment from "moment";
 const BilliardDetail = () => {
   const { id } = useLocalSearchParams("id");
   const [data, setData] = useState({});
@@ -30,6 +32,11 @@ const BilliardDetail = () => {
   console.log(data);
   // console.log(image);
 
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+
   return (
     <View className="bg-white h-[100%]">
       <View className="w-[100vw] rounded-md items-center mt-2">
@@ -42,7 +49,7 @@ const BilliardDetail = () => {
         <View className="flex-row justify-between items-center p-2 mx-3">
           <Text className="font-pbold text-base">{data?.bidaName}</Text>
           <Text className="font-pbold text-primary text-base">
-            {data?.averagePrice}/giờ
+            {formatter.format(data?.averagePrice)}/giờ
           </Text>
         </View>
         <View className="mx-5">
@@ -61,7 +68,8 @@ const BilliardDetail = () => {
           <View className="flex-row items-center pt-1">
             <AntDesign name="clockcircleo" size={16} color="rgb(225 39 39)" />
             <Text className="ml-2 text-gray-500 text-sm font-pregular">
-              Open: {data?.openingHours}
+              Mở cửa từ: {moment(data?.openTime, "HH:mm:ss").format("HH:mm")} -{" "}
+              {moment(data?.closeTime, "HH:mm:ss").format("HH:mm")}
             </Text>
           </View>
           <View className="flex-row items-center pt-1">
@@ -75,7 +83,9 @@ const BilliardDetail = () => {
           <Text className="font-pbold text-base">Mô tả</Text>
           <View>
             <Text className="text-gray-500 text-sm font-pregular">
-              {data?.descrpition}
+              {data?.description
+                ? data.description
+                : "Câu lạc bộ bida chuyên nghiệp, phục vụ tận tình, giá cả hợp lý, không gian thoáng đãng, sạch sẽ, phù hợp cho mọi lứa tuổi."}
               {/* <Text className="text-primary"> Read More. . .</Text> */}
             </Text>
           </View>
@@ -87,7 +97,7 @@ const BilliardDetail = () => {
             <Text>4.5</Text>
           </View>
         </View>
-        <View className="flex-row justify-around">
+        {/* <View className="flex-row justify-around">
           <Image
             source={require("../../assets/detail1.png")}
             className="w-[27%] rounded-md"
@@ -100,10 +110,22 @@ const BilliardDetail = () => {
             source={require("../../assets/detail3.png")}
             className="w-[27%] rounded-md"
           />
-        </View>
+        </View> */}
       </View>
       <View className="absolute bottom-4 w-[100%]">
-        <TouchableOpacity
+        <View className=" w-[90%] mx-auto">
+          <Button
+            title="Đặt bàn ngay"
+            onSubmit={() => {
+              router.navigate({
+                pathname: "/booking-clb",
+                params: { id },
+              });
+            }}
+          />
+        </View>
+
+        {/* <TouchableOpacity
           className="flex-row items-center justify-center bg-primary rounded-xl mx-10 my-2 p-4"
           onPress={() => {
             router.navigate({
@@ -115,7 +137,7 @@ const BilliardDetail = () => {
           <Text className="text-white font-psemibold text-base">
             Đặt bàn ngay
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
