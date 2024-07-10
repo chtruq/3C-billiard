@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { getWaitingBills } from "../../lib/action/bill";
 import { Entypo } from "@expo/vector-icons";
-const CardCLB = ({ data }) => {
+const CardCLB = ({ data, isRefreshing }) => {
   const [waitingStatus, setWaitingStatus] = useState([]);
   const getWatingStatus = async () => {
     try {
@@ -12,6 +12,8 @@ const CardCLB = ({ data }) => {
       console.log(response);
       if (response.length > 0) {
         setWaitingStatus(response.length);
+      } else {
+        setWaitingStatus([]);
       }
     } catch (error) {
       console.log(error);
@@ -20,7 +22,7 @@ const CardCLB = ({ data }) => {
 
   useEffect(() => {
     getWatingStatus();
-  }, []);
+  }, [isRefreshing]);
 
   if (waitingStatus.length > 0) {
     console.log(waitingStatus);

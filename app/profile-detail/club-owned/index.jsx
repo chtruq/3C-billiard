@@ -45,28 +45,6 @@ const ClubOwned = () => {
     }, [user.userid])
   );
 
-  // const data = [
-  //   {
-  //     id: 1,
-  //     name: "CLB Bida",
-  //     address: "123 Đường 3/2, Quận 10, TP.HCM",
-  //     status: "active",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "CLB Bida 2",
-  //     address: "123 Đường 3/2, Quận 10, TP.HCM",
-  //     status: "waiting",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "CLB Bida 3",
-  //     address: "123 Đường 3/2, Quận 10, TP.HCM",
-  //     status: "reject",
-  //   },
-  // ];
-  console.log(bidaClub);
-
   return (
     <ScrollView
       refreshControl={
@@ -84,7 +62,9 @@ const ClubOwned = () => {
           {bidaClub
             .filter((item) => item.status !== "INACTIVE")
             .map((item) => {
-              return <CardCLB key={item.id} data={item} />;
+              return (
+                <CardCLB key={item.id} isRefreshing={loading} data={item} />
+              );
             })}
           {bidaClub.length === 0 && (
             <View className="flex-1 items-center justify-center">

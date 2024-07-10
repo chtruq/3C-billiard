@@ -6,7 +6,6 @@ import { getSlotBySlotId } from "../../lib/action/bidaTableSlot";
 import { router } from "expo-router";
 const BookingStatus = ({ data }) => {
   const clubId = data.clubId;
-  console.log(clubId);
   const slotId = data.bookedSlotIds;
   const [clubDetails, setClubDetails] = useState({});
   const [error, setError] = useState(null);

@@ -6,6 +6,7 @@ import {
   Image,
   Modal,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { acceptBill, rejectBill } from "../../lib/action/bill";
@@ -14,9 +15,12 @@ import {
   getSlotBySlotId,
 } from "../../lib/action/bidaTableSlot";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 const Confirmation = ({ data, reloadData }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [isRejected, setIsRejected] = useState(false);
   const [slot, setSlot] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -29,7 +33,7 @@ const Confirmation = ({ data, reloadData }) => {
   };
   const handleAccept = async () => {
     try {
-      setIsLoading(true);
+      setIsAccepted(true);
       const response = await acceptBill(data.id);
       console.log(response);
       reloadData();
@@ -37,13 +41,13 @@ const Confirmation = ({ data, reloadData }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setIsAccepted(false);
     }
   };
 
   const handleReject = async () => {
     try {
-      setIsLoading(true);
+      setIsRejected(true);
       const response = await rejectBill(data.id);
       console.log(response);
       Alert.alert("Đã từ chối đơn đặt bàn");
@@ -51,7 +55,7 @@ const Confirmation = ({ data, reloadData }) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false);
+      setIsRejected(false);
     }
   };
 
@@ -110,6 +114,13 @@ const Confirmation = ({ data, reloadData }) => {
       .join(", ");
   };
 
+  const loading = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
+
   return (
     <View className="rounded-lg border my-1 h-[20vh]">
       <View className="flex-row  p-2">
@@ -147,18 +158,24 @@ const Confirmation = ({ data, reloadData }) => {
           <TouchableOpacity
             onPress={() => {
               handleAccept();
+              // loading();
             }}
-            className="bg-green-500 p-4 rounded-lg"
+            className="bg-green-500 p-4 rounded-lg w-28 flex-row items-center justify-center"
           >
             <Text className=" text-white">Đồng ý</Text>
+            <Text> </Text>
+            {isAccepted && <ActivityIndicator size="small" color="#fff" />}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               handleReject();
+              // loading();
             }}
-            className="bg-primary p-4 rounded-lg"
+            className="bg-primary p-4 rounded-lg w-28 flex-row items-center justify-center"
           >
             <Text className="text-white">Từ chối</Text>
+            <Text> </Text>
+            {isRejected && <ActivityIndicator size="small" color="#fff" />}
           </TouchableOpacity>
         </View>
       </View>
@@ -179,6 +196,7 @@ const Confirmation = ({ data, reloadData }) => {
             <Button title="Đóng" onPress={closeModal} />
           </View>
         </View>
+        <StatusBar style="inverted" />
       </Modal>
     </View>
   );
