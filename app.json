@@ -5,7 +5,7 @@
     "scheme": "3CBilliard",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/3C-Icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/home.png",

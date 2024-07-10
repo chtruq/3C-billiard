@@ -16,20 +16,25 @@ import { Ionicons } from "@expo/vector-icons";
 import Button from "../../components/Button";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const UserInfo = () => {
   const [paymentMethod, setPaymentMethod] = useState("momo");
   const onPaymentMethodChange = (method) => {
     setPaymentMethod(method);
   };
+
+  const { user } = useGlobalContext();
+
+  console.log("user", user);
   // useEffect(() => {
   //   console.log("paymentMethod", paymentMethod);
   // }, [paymentMethod]);
 
   const [form, setForm] = useState({
     name: "",
-    phone: "",
-    email: "",
+    phone: user.Phone || "",
+    email: user.email || "",
     paymentMethod: "",
     note: "",
   });
