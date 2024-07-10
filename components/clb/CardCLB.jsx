@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { getWaitingBills } from "../../lib/action/bill";
 import { Entypo } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 const CardCLB = ({ data, isRefreshing }) => {
   const [waitingStatus, setWaitingStatus] = useState([]);
   const getWatingStatus = async () => {
@@ -114,6 +115,20 @@ const CardCLB = ({ data, isRefreshing }) => {
                 source={require("../../assets/table-create.png")}
               />
               <Text>Tạo bàn bida</Text>
+            </TouchableOpacity>
+          )}
+          {data?.status === "ACTIVE" && (
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: "/profile-detail/club-statistic",
+                  params: { clubId: data?.id },
+                });
+              }}
+              className="items-center"
+            >
+              <MaterialIcons name="history" size={26} color="black" />
+              <Text>Thống kê</Text>
             </TouchableOpacity>
           )}
 

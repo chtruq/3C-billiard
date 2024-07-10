@@ -63,6 +63,15 @@ const ProfileLayout = () => {
           headerTitle: "Chỉnh sửa thông tin câu lạc bộ",
         }}
       />
+
+      <Stack.Screen
+        name="club-statistic"
+        options={{
+          headerShown: false,
+          headerBackButtonMenuEnabled: true,
+          headerTitle: "Thống kê câu lạc bộ",
+        }}
+      />
     </Stack>
   );
 };

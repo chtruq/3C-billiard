@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { router } from "expo-router";
+import moment from "moment";
 
 const NotiCard = ({ data }) => {
   const formatDateTime = (dateTimeString) => {
@@ -65,8 +66,12 @@ const NotiCard = ({ data }) => {
         />
       </View>
       <View className="flex-col items-start w-[75vw] ml-2">
-        <Text className="font-psemibold">{data.descrpition}</Text>
-        <Text>{formatDateTime(data.createAt)}</Text>
+        <Text className="font-pmedium">{data.descrpition}</Text>
+        <Text className="font-mono">
+          {/* {formatDateTime(data.createAt)} */}
+          {/* {moment(data.createAt).format("HH:mm")} */}
+          Ngày: {moment(data.createAt).format("DD/MM")}
+        </Text>
       </View>
     </TouchableOpacity>
   );
