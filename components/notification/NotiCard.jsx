@@ -69,8 +69,16 @@ const NotiCard = ({ data }) => {
         <Text className="font-pmedium">{data.descrpition}</Text>
         <Text className="font-mono">
           {/* {formatDateTime(data.createAt)} */}
-          {/* {moment(data.createAt).format("HH:mm")} */}
-          Ngày: {moment(data.createAt).format("DD/MM")}
+          {/* {new Date(data.createAt).toLocaleString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })} */}
+          {moment(data.createAt).format("HH:mm") +
+            " " +
+            moment(data.createAt).format("DD/MM")}
         </Text>
       </View>
     </TouchableOpacity>

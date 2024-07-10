@@ -14,7 +14,7 @@ const ClubStatistic = () => {
   const style = {
     box: "h-[10vh] w-[28vw] justify-center items-center my-2 border rounded-md border-primary ",
     text: "font-psemibold text-center ",
-    textmain: "font-pbold text-center text-primary mt-1 ",
+    textmain: "font-pbold text-center text-primary mt-1  ",
   };
   const formatter = new Intl.NumberFormat("vi-VN", {
     style: "currency",
