@@ -1,4 +1,10 @@
-import { Link, SplashScreen, router, useFocusEffect } from "expo-router";
+import {
+  Link,
+  Redirect,
+  SplashScreen,
+  router,
+  useFocusEffect,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
@@ -8,15 +14,16 @@ import {
   Text,
   View,
 } from "react-native";
+import { useGlobalContext } from "../context/GlobalProvider";
 
 export default function App() {
   const bg = require("../assets/home.png");
 
-  useFocusEffect(() => {
-    setTimeout(() => {
-      router.replace("/signin");
-    }, 1000);
-  });
+  const { loading, isLogged } = useGlobalContext();
+
+  if (!loading && isLogged) return <Redirect href="/home" />;
+
+  if (!loading && !isLogged) return <Redirect href="/signin" />;
 
   return (
     <View className="flex-1 items-center justify-center">
