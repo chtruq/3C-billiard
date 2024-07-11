@@ -18,30 +18,10 @@ import {
 import { useGlobalContext } from "../context/GlobalProvider";
 import React, { useEffect } from "react";
 
-const Welcome = () => {
-  const bg = require("../assets/home.png");
-
+const index = () => {
   const { loading, isLogged } = useGlobalContext();
 
   if (!loading && isLogged) return <Redirect href="/home" />;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      SplashScreen.hideAsync();
-    }, [])
-  );
-
-  // if (!loading && !isLogged) return <Redirect href="/signin" />;
-  // useEffect(() => {
-  //   if (!loading && isLogged) {
-  //     SplashScreen.hideAsync();
-  //     router.push("/home");
-  //   }
-  //   if (!loading && !isLogged) {
-  //     SplashScreen.hideAsync();
-  //     router.push("/signin");
-  //   }
-  // }, [loading, isLogged]);
 
   return (
     <View className="flex-1 items-center justify-center">
@@ -101,4 +81,4 @@ const Welcome = () => {
   );
 };
 
-export default Welcome;
+export default index;
