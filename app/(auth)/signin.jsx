@@ -156,9 +156,9 @@ const SignIn = () => {
                 }}
                 isLoading={isLoading}
               />
-              {/* <TouchableOpacity
+              <TouchableOpacity
                 onPress={() => {
-                  // router.push("/home");
+                  router.push("/asdasd");
                 }}
                 className="bg-white rounded-3xl border-2 mt-4"
               >
@@ -171,7 +171,7 @@ const SignIn = () => {
                     Đăng nhập với Google
                   </Text>
                 </View>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
             </View>
 
             <View className="flex-row justify-center mt-10">

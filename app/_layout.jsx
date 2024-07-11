@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
-import GlobalProvider from "../context/GlobalProvider";
+import GlobalProvider, { useGlobalContext } from "../context/GlobalProvider";
 import Toast from "react-native-toast-message";
 import CustomUnmatched from "./[...unmatched]";
 
@@ -43,7 +43,7 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <Stack initialRouteName="(auth)">
+      <Stack initialRouteName="index">
         {/* <Stack.Screen
           name="welcome"
           options={{

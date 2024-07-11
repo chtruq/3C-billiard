@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { useGlobalContext } from "../context/GlobalProvider";
+import React, { useEffect } from "react";
 
 export default function index() {
   const bg = require("../assets/home.png");
@@ -24,6 +25,16 @@ export default function index() {
   if (!loading && isLogged) return <Redirect href="/home" />;
 
   if (!loading && !isLogged) return <Redirect href="/signin" />;
+  useEffect(() => {
+    if (!loading && isLogged) {
+      SplashScreen.hideAsync();
+      router.push("/home");
+    }
+    if (!loading && !isLogged) {
+      SplashScreen.hideAsync();
+      router.push("/signin");
+    }
+  }, [loading, isLogged]);
 
   return (
     <View className="flex-1 items-center justify-center">
