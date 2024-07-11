@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { useGlobalContext } from "../context/GlobalProvider";
 
-export default function Welcome() {
+export default function index() {
   const bg = require("../assets/home.png");
 
   const { loading, isLogged } = useGlobalContext();

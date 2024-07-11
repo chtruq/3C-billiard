@@ -156,7 +156,7 @@ const SignIn = () => {
                 }}
                 isLoading={isLoading}
               />
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   // router.push("/home");
                 }}
@@ -171,7 +171,7 @@ const SignIn = () => {
                     Đăng nhập với Google
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             <View className="flex-row justify-center mt-10">

@@ -4,6 +4,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import GlobalProvider from "../context/GlobalProvider";
 import Toast from "react-native-toast-message";
+import CustomUnmatched from "./[...unmatched]";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,12 +50,12 @@ const RootLayout = () => {
             headerShown: false,
           }}
         /> */}
-        {/* <Stack.Screen
+        <Stack.Screen
           name="index"
           options={{
             headerShown: false,
           }}
-        /> */}
+        />
         <Stack.Screen
           name="(auth)"
           options={{
@@ -90,6 +91,7 @@ const RootLayout = () => {
           }}
         />
       </Stack>
+
       <Toast />
     </GlobalProvider>
   );
