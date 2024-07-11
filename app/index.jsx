@@ -18,12 +18,18 @@ import {
 import { useGlobalContext } from "../context/GlobalProvider";
 import React, { useEffect } from "react";
 
-export default function index() {
+const Welcome = () => {
   const bg = require("../assets/home.png");
 
   const { loading, isLogged } = useGlobalContext();
 
   if (!loading && isLogged) return <Redirect href="/home" />;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      SplashScreen.hideAsync();
+    }, [])
+  );
 
   // if (!loading && !isLogged) return <Redirect href="/signin" />;
   // useEffect(() => {
@@ -64,7 +70,7 @@ export default function index() {
             </View>
 
             <View className="w-[84vw] pt-[15vh] ">
-              <View className="justify-around flex-row rounded-full border-2">
+              <View className="justify-around flex-row rounded-full border shadow-2xl">
                 <TouchableOpacity
                   onPress={() => {
                     router.push("/signin");
@@ -93,4 +99,6 @@ export default function index() {
       <StatusBar style="auto" />
     </View>
   );
-}
+};
+
+export default Welcome;
