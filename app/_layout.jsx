@@ -42,13 +42,19 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <Stack initialRouteName="index">
-        <Stack.Screen
+      <Stack initialRouteName="(auth)">
+        {/* <Stack.Screen
+          name="welcome"
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        {/* <Stack.Screen
           name="index"
           options={{
             headerShown: false,
           }}
-        />
+        /> */}
         <Stack.Screen
           name="(auth)"
           options={{
