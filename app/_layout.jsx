@@ -43,7 +43,7 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <Stack initialRouteName="index">
+      <Stack>
         {/* <Stack.Screen
           name="welcome"
           options={{
@@ -87,6 +87,12 @@ const RootLayout = () => {
           options={{
             headerTitle: "Hồ sơ",
             headerBackTitle: "Quay lại",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="[...unmatched]"
+          options={{
             headerShown: false,
           }}
         />
