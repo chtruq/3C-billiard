@@ -89,7 +89,6 @@ const SignUp = () => {
       try {
         await AsyncStorage.setItem("email", form.Email);
         const response = await register(formData);
-        console.log(response);
         if (response.id) {
           Toast.show({
             type: "success",
@@ -105,7 +104,7 @@ const SignUp = () => {
       } catch (error) {
         // saving error
         console.log(error);
-        Alert.alert(`Email đã tồn tại hoặc lỗi hệ thống!`);
+        // Alert.alert(`Email đã tồn tại hoặc lỗi hệ thống!`);
       } finally {
         setIsLoading(false);
       }
