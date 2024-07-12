@@ -23,6 +23,12 @@ const WelcomeScreen = () => {
 
   if (!loading && isLogged) return <Redirect href="/home" />;
 
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     SplashScreen.hideAsync();
+  //   }, [])
+  // );
+
   return (
     <View className="flex-1 items-center justify-center">
       <ImageBackground
