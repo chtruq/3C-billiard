@@ -103,8 +103,10 @@ const SignUp = () => {
         }
       } catch (error) {
         // saving error
-        console.log(error);
-        // Alert.alert(`Email đã tồn tại hoặc lỗi hệ thống!`);
+        if (error.response) {
+          console.log(error.response.data);
+          Alert.alert(`${error.response.data.message}`);
+        }
       } finally {
         setIsLoading(false);
       }
