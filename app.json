@@ -23,7 +23,8 @@
         "foregroundImage": "./assets/3c-adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "Billiard.C3"
+      "package": "com.billiard.billiard",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/3c-adaptive-icon.png"

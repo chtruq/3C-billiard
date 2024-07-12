@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Button,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import InputField from "../../../components/clb/InputField";
@@ -22,6 +23,7 @@ import { useGlobalContext } from "../../../context/GlobalProvider";
 import { createBidaClub } from "../../../lib/action/bidaclubs";
 const ClubOwned = () => {
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
@@ -75,10 +77,21 @@ const ClubOwned = () => {
     setDate(currentDate);
   };
 
+  useEffect(() => {
+    setForm({
+      ...form,
+      address: detailAddress + ", " + ward + ", " + district + ", " + province,
+    });
+  }, [province, district, ward, detailAddress]);
+
+  useEffect(() => {
+    console.log(form);
+  }, [form]);
+
   const validate = () => {
     if (
       form.bidaName === "" ||
-      form.address === ", , , " ||
+      form.address === "" ||
       form.description === "" ||
       form.image === "" ||
       form.openTime === "" ||
@@ -120,9 +133,7 @@ const ClubOwned = () => {
       return false;
     }
 
-    if (
-      !/https:\/\/www.google.com\/maps\/embed\?pb=/.test(form.googleMapLink)
-    ) {
+    if (!/https:/.test(form.googleMapLink)) {
       Alert.alert("Link Google Map không hợp lệ");
       return false;
     }
@@ -134,7 +145,7 @@ const ClubOwned = () => {
     if (!validate()) {
       return;
     }
-
+    setIsLoading(true);
     try {
       const formData = new FormData();
       formData.append("userId", form.userId);
@@ -166,6 +177,7 @@ const ClubOwned = () => {
       console.log(error);
       Alert.alert("Đã có lỗi xảy ra");
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -308,6 +320,9 @@ const ClubOwned = () => {
               <Text className="text-white text-base font-psemibold ">
                 Hoàn tất
               </Text>
+              {isLoading && (
+                <ActivityIndicator size="small" color="#fff" className="ml-2" />
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
