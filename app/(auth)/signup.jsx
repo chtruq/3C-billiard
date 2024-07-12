@@ -18,8 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TextField from "../../components/TextField";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { register } from "../../lib/action/users";
 import Toast from "react-native-toast-message";
+import { register, registerAccount } from "../../lib/action/users";
 
 const SignUp = () => {
   const userIcon = require("../../assets/user.png");
@@ -88,8 +88,8 @@ const SignUp = () => {
 
       try {
         await AsyncStorage.setItem("email", form.Email);
-        const response = await register(formData);
-        if (response.id) {
+        const response = await registerAccount(formData);
+        if (response.note === "Success") {
           Toast.show({
             type: "success",
             text1: "Đăng kí thành công",
@@ -103,10 +103,8 @@ const SignUp = () => {
         }
       } catch (error) {
         // saving error
-        if (error.response) {
-          console.log(error.response.data);
-          Alert.alert(`${error.response.data.message}`);
-        }
+        console.log(error);
+        Alert.alert(`Lỗi hệ thống!`);
       } finally {
         setIsLoading(false);
       }
