@@ -158,7 +158,8 @@ const SignIn = () => {
               />
               <TouchableOpacity
                 onPress={() => {
-                  router.push("/asdasd");
+                  // router.push("/sign");
+                  Alert.alert("Chức năng đang phát triển");
                 }}
                 className="bg-white rounded-3xl border-2 mt-4"
               >

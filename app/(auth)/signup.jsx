@@ -87,7 +87,7 @@ const SignUp = () => {
 
       try {
         await AsyncStorage.setItem("email", form.Email);
-        // const response = await register(formData);
+        const response = await register(formData);
 
         // console.log(response);
         Toast.show({
