@@ -18,7 +18,7 @@ import {
 import { useGlobalContext } from "../context/GlobalProvider";
 import React, { useEffect } from "react";
 
-const index = () => {
+const WelcomeScreen = () => {
   const { loading, isLogged } = useGlobalContext();
 
   if (!loading && isLogged) return <Redirect href="/home" />;
@@ -81,4 +81,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default WelcomeScreen;
