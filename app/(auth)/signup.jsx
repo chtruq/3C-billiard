@@ -95,7 +95,7 @@ const SignUp = () => {
           text1: "Đăng kí thành công",
           text2: "Chuyển hướng đến trang đăng nhập",
         });
-        router.back();
+        router.replace("/signin");
       } catch (error) {
         // saving error
         console.log(error);
