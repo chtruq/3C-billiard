@@ -214,7 +214,7 @@ const ClubOwned = () => {
               <InputField
                 value={detailAddress}
                 onChange={(value) => {
-                  setWard(value);
+                  setDetailAddress(value);
                 }}
                 title={"Địa chỉ cụ thể"}
               />
