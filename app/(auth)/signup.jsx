@@ -1,11 +1,9 @@
 import {
   View,
   Text,
-  ImageBackground,
   Image,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
@@ -16,10 +14,10 @@ import {
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextField from "../../components/TextField";
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import { register, registerAccount } from "../../lib/action/users";
+import { registerAccount } from "../../lib/action/users";
 
 const SignUp = () => {
   const userIcon = require("../../assets/user.png");
@@ -29,17 +27,11 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [form, setForm] = useState({
-    // UserName: "",
-    // Email: "",
-    // Phone: "",
-    // Password: "",
     UserName: "",
     Email: "",
     Phone: "",
     Password: "",
   });
-
-  const formData = new FormData();
 
   const validate = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -71,8 +63,12 @@ const SignUp = () => {
       alert("Số điện thoại không hợp lệ");
       return false;
     }
-    // if (!passwordRegex.test(form.password)) {
-    //   alert(
+    if (!passwordRegex.test(form.Password)) {
+      alert(
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ thường, chữ in hoa, số và ký tự đặc biệt"
+      );
+      return false;
+    }
 
     return true;
   };
@@ -80,15 +76,25 @@ const SignUp = () => {
   const handleSubmit = async () => {
     if (validate()) {
       setIsLoading(true);
-      const formData = new FormData();
-      formData.append("UserName", form.UserName);
-      formData.append("Email", form.Email);
-      formData.append("Phone", form.Phone);
-      formData.append("Password", form.Password);
-
+      console.log("form", form);
       try {
+        const adjustedForm = {
+          UserName: form.UserName,
+          Email: form.Email,
+          Password: form.Password,
+          Phone: form.Phone,
+        };
+        console.log("adjustedForm", adjustedForm);
         await AsyncStorage.setItem("email", form.Email);
-        const response = await registerAccount(formData);
+
+        // Log the request body before sending it
+        console.log("Sending request with body:", JSON.stringify(adjustedForm));
+
+        const response = await registerAccount(adjustedForm);
+
+        // Log the response received
+        console.log("Received response:", response);
+
         if (response.note === "Success") {
           Toast.show({
             type: "success",
@@ -96,26 +102,23 @@ const SignUp = () => {
             text2: "Chuyển hướng đến trang đăng nhập",
           });
           router.replace("/signin");
-        } else if (response.message.includes("already exists.")) {
+        } else if (
+          response.message &&
+          response.message.includes("already exists.")
+        ) {
+          console.log("email exist", response);
           Alert.alert(`Email đã tồn tại!`);
         } else {
+          console.log("can't", response);
           Alert.alert(`Lỗi hệ thống!`);
         }
       } catch (error) {
-        // saving error
         console.log(error);
         Alert.alert(`Lỗi hệ thống!`);
       } finally {
         setIsLoading(false);
       }
     }
-  };
-
-  const Loading = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
   };
 
   return (
@@ -175,7 +178,7 @@ const SignUp = () => {
                 fieldName="Mật khẩu"
                 value={form.Password}
                 hidePassword={true}
-                // icon={passwordIcon}
+                icon={passwordIcon}
               />
             </View>
             <TouchableOpacity
