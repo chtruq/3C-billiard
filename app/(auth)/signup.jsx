@@ -11,6 +11,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -88,17 +89,23 @@ const SignUp = () => {
       try {
         await AsyncStorage.setItem("email", form.Email);
         const response = await register(formData);
-
-        // console.log(response);
-        Toast.show({
-          type: "success",
-          text1: "Đăng kí thành công",
-          text2: "Chuyển hướng đến trang đăng nhập",
-        });
-        router.replace("/signin");
+        console.log(response);
+        if (response.id) {
+          Toast.show({
+            type: "success",
+            text1: "Đăng kí thành công",
+            text2: "Chuyển hướng đến trang đăng nhập",
+          });
+          router.replace("/signin");
+        } else if (response.message.includes("already exists.")) {
+          Alert.alert(`Email đã tồn tại!`);
+        } else {
+          Alert.alert(`Lỗi hệ thống!`);
+        }
       } catch (error) {
         // saving error
         console.log(error);
+        Alert.alert(`Email đã tồn tại hoặc lỗi hệ thống!`);
       } finally {
         setIsLoading(false);
       }

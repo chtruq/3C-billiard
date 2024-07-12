@@ -156,7 +156,7 @@ const SignIn = () => {
                 }}
                 isLoading={isLoading}
               />
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   // router.push("/sign");
                   Alert.alert("Chức năng đang phát triển");
@@ -172,7 +172,7 @@ const SignIn = () => {
                     Đăng nhập với Google
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             <View className="flex-row justify-center mt-10">
