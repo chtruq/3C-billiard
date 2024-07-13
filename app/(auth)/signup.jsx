@@ -78,6 +78,7 @@ const SignUp = () => {
       setIsLoading(true);
       console.log("form", form);
       try {
+
         const adjustedForm = {
           UserName: form.UserName,
           Email: form.Email,
@@ -85,6 +86,7 @@ const SignUp = () => {
           Phone: form.Phone,
         };
         console.log("adjustedForm", adjustedForm);
+
         await AsyncStorage.setItem("email", form.Email);
 
         // Log the request body before sending it
