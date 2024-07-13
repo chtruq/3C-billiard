@@ -87,6 +87,7 @@ const SignUp = () => {
       formData.append("Password", form.Password);
 
       try {
+        Alert.alert("abc");
         await AsyncStorage.setItem("email", form.Email);
         const response = await registerAccount(formData);
         if (response.note === "Success") {
