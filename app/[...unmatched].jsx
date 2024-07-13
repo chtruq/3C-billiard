@@ -79,5 +79,22 @@
 // };
 
 // export default CustomUnmatchedRoute;
-import { Unmatched } from "expo-router";
-export default Unmatched;
+
+import { router, Unmatched, useFocusEffect } from "expo-router";
+import React from "react";
+import { View, Text } from "react-native";
+
+const CustomUnmatchedRoute = () => {
+  useFocusEffect(() => {
+    //go to sign in page
+    router.replace("/");
+  }, []);
+
+  return (
+    <View>
+      <Text></Text>
+    </View>
+  );
+};
+
+export default CustomUnmatchedRoute;
