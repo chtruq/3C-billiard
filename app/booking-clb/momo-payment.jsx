@@ -50,7 +50,7 @@ const MomoPayment = () => {
     getUserForm();
   }, []);
 
-  const url = `${bankingUrl}&amount=${totalPrice}&addInfo=${userPhone}`;
+  const url = `${bankingUrl}&amount=${totalPrice}&addInfo=Thanh toan dat ban 3Cbilliard ${userPhone}`;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -143,7 +143,7 @@ const MomoPayment = () => {
           </View>
           <View className="mt-2">
             <Text className="font-pmedium text-base">
-              Nội dung: <Text className="text-xl font-pbold">{userPhone}</Text>
+              Nội dung: <Text className="text-xl font-pbold">liên lạc: {userPhone}</Text>
             </Text>
           </View>
           <View>
